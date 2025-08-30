@@ -127,15 +127,17 @@ public class HomeActivity extends AppCompatActivity {
 
 
         // Cart button
-//        findViewById(R.id.cartBtn).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Navigate to cart
-//                Intent intent = new Intent(HomeActivity.this, CartActivity.class);
-//                startActivity(intent);
-//
-//            }
-//        });
+        findViewById(R.id.cartBtn).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                // Navigate to cart
+                Intent intent = new Intent(HomeActivity.this, CartActivity.class);
+                startActivity(intent);
+
+            }
+        });
 
 
         // Settings button

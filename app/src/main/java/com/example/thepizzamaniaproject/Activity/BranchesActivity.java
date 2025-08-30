@@ -82,7 +82,8 @@ public class BranchesActivity extends AppCompatActivity {
 
 
         // Profile button
-        findViewById(R.id.profileBtn).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.profileBtn).setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
@@ -95,15 +96,16 @@ public class BranchesActivity extends AppCompatActivity {
 
 
         // Cart button
-//        findViewById(R.id.cartBtn).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Navigate to cart
-//                Intent intent = new Intent(BranchesActivity.this, CartActivity.class);
-//                startActivity(intent);
-//
-//            }
-//        });
+        findViewById(R.id.cartBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                // Navigate to cart
+                Intent intent = new Intent(BranchesActivity.this, CartActivity.class);
+                startActivity(intent);
+
+            }
+        });
 
 
         // Settings button
