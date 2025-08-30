@@ -181,11 +181,13 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
-    private void loadCurrentUser() {
+    private void loadCurrentUser()
+    {
         String userEmail = sessionManager.getUserEmail();
         currentUser = databaseHelper.getUserByEmail(userEmail);
 
-        if (currentUser == null) {
+        if (currentUser == null)
+        {
             Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show();
             sessionManager.logoutUser();
             goToLoginActivity();
@@ -408,6 +410,8 @@ public class ProfileActivity extends AppCompatActivity {
         currentPhotoPath = image.getAbsolutePath();
         return image;
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data)
