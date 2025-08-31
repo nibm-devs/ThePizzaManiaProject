@@ -24,6 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ThePizzaManiaProject">
         <activity
+            android:name=".Activity.RiderRegistrationActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.AdminLoginActivity"
             android:exported="false" />
         <activity
