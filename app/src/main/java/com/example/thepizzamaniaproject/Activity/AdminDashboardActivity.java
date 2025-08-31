@@ -1,5 +1,6 @@
 package com.example.thepizzamaniaproject.Activity;
 
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Toast;
@@ -7,13 +8,12 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
-import com.example.thepizzamania.R;
+import com.example.thepizzamaniaproject.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class AdminDashboardActivity extends AppCompatActivity {
 
-    private CardView cvMenuManagement, cvBranchManagement, cvOrderManagement;
-    private CardView cvUserManagement, cvRiderManagement, cvReports;
+    private CardView cvMenu, cvBranches, cvOrders, cvUsers, cvRiders, cvReports;
     private FirebaseAuth mAuth;
 
     @Override
@@ -27,33 +27,33 @@ public class AdminDashboardActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        cvMenuManagement = findViewById(R.id.cvMenuManagement);
-        cvBranchManagement = findViewById(R.id.cvBranchManagement);
-        cvOrderManagement = findViewById(R.id.cvOrderManagement);
-        cvUserManagement = findViewById(R.id.cvUserManagement);
-        cvRiderManagement = findViewById(R.id.cvRiderManagement);
+        cvMenu = findViewById(R.id.cvMenu);
+        cvBranches = findViewById(R.id.cvBranches);
+        cvOrders = findViewById(R.id.cvOrders);
+        cvUsers = findViewById(R.id.cvUsers);
+        cvRiders = findViewById(R.id.cvRiders);
         cvReports = findViewById(R.id.cvReports);
     }
 
     private void setupClickListeners() {
-        cvMenuManagement.setOnClickListener(v -> {
-            startActivity(new Intent(AdminDashboardActivity.this, MenuManagementActivity.class));
+        cvMenu.setOnClickListener(v -> {
+            startActivity(new Intent(this, MenuManagementActivity.class));
         });
 
-        cvBranchManagement.setOnClickListener(v -> {
-            startActivity(new Intent(AdminDashboardActivity.this, BranchManagementActivity.class));
+        cvBranches.setOnClickListener(v -> {
+            startActivity(new Intent(this, BranchManagementActivity.class));
         });
 
-        cvOrderManagement.setOnClickListener(v -> {
-            startActivity(new Intent(AdminDashboardActivity.this, OrderManagementActivity.class));
+        cvOrders.setOnClickListener(v -> {
+            startActivity(new Intent(this, OrderManagementActivity.class));
         });
 
-        cvUserManagement.setOnClickListener(v -> {
-            startActivity(new Intent(AdminDashboardActivity.this, UserManagementActivity.class));
+        cvUsers.setOnClickListener(v -> {
+            startActivity(new Intent(this, UserManagementActivity.class));
         });
 
-        cvRiderManagement.setOnClickListener(v -> {
-            startActivity(new Intent(AdminDashboardActivity.this, RiderManagementActivity.class));
+        cvRiders.setOnClickListener(v -> {
+            startActivity(new Intent(this, RiderManagementActivity.class));
         });
 
         cvReports.setOnClickListener(v -> {
