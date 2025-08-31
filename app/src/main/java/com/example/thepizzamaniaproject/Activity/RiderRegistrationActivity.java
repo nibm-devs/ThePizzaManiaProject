@@ -1,15 +1,24 @@
 package com.example.thepizzamaniaproject.Activity;
 
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.thepizzamaniaproject.R;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class RiderRegistrationActivity extends AppCompatActivity {
 
@@ -18,10 +27,17 @@ public class RiderRegistrationActivity extends AppCompatActivity {
     private Button registerButton;
     private TextView loginTextView;
 
+    private FirebaseAuth mAuth;
+    private DatabaseReference databaseReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rider_registration);
+
+        FirebaseApp.initializeApp(this);
+        mAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference("Riders");
 
         // Initialize input fields
         nameEditText = findViewById(R.id.nameEditText);
@@ -57,28 +73,65 @@ public class RiderRegistrationActivity extends AppCompatActivity {
                     return;
                 }
 
+                if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                    emailEditText.setError("Enter a valid email");
+                    emailEditText.requestFocus();
+                    return;
+                }
+
+                if (!Patterns.PHONE.matcher(phone).matches()) {
+                    phoneEditText.setError("Enter a valid phone number");
+                    phoneEditText.requestFocus();
+                    return;
+                }
+
                 if (!password.equals(confirmPassword)) {
                     Toast.makeText(RiderRegistrationActivity.this,
                             "Passwords do not match", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                Toast.makeText(RiderRegistrationActivity.this,
-                        "Registration successful!", Toast.LENGTH_SHORT).show();
+                // Register user with Firebase Authentication
+                mAuth.createUserWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(task -> {
+                            if (task.isSuccessful()) {
+                                FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                                if (firebaseUser != null) {
+                                    // Save additional info to Realtime Database
+                                    String userId = firebaseUser.getUid();
+                                    HashMap<String, Object> userMap = new HashMap<>();
+                                    userMap.put("name", name);
+                                    userMap.put("email", email);
+                                    userMap.put("phone", phone);
+                                    userMap.put("address", address);
+                                    userMap.put("username", username);
 
-                // TODO: Add your database/Firebase registration logic here
+                                    databaseReference.child(userId).setValue(userMap)
+                                            .addOnCompleteListener(dbTask -> {
+                                                if (dbTask.isSuccessful()) {
+                                                    Toast.makeText(RiderRegistrationActivity.this,
+                                                            "Registration successful!", Toast.LENGTH_SHORT).show();
+                                                    // TODO: redirect to login page
+                                                } else {
+                                                    Toast.makeText(RiderRegistrationActivity.this,
+                                                            "Database error: " + dbTask.getException().getMessage(),
+                                                            Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                }
+                            } else {
+                                Toast.makeText(RiderRegistrationActivity.this,
+                                        "Registration failed: " + task.getException().getMessage(),
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
             }
         });
 
         // Login redirect click
-        loginTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // TODO: Redirect to login activity
+        loginTextView.setOnClickListener(v ->
                 Toast.makeText(RiderRegistrationActivity.this,
-                        "Redirect to login page", Toast.LENGTH_SHORT).show();
-            }
-        });
+                        "Redirect to login page", Toast.LENGTH_SHORT).show()
+        );
     }
 }
