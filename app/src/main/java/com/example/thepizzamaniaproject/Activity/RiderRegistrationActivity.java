@@ -27,7 +27,7 @@ public class RiderRegistrationActivity extends AppCompatActivity {
     private Button registerButton;
     private TextView loginTextView;
 
-    private FirebaseAuth mAuth;
+    //private FirebaseAuth mAuth;
     private DatabaseReference databaseReference;
 
     @Override
@@ -36,8 +36,8 @@ public class RiderRegistrationActivity extends AppCompatActivity {
         setContentView(R.layout.activity_rider_registration);
 
         FirebaseApp.initializeApp(this);
-        mAuth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference("Riders");
+       // mAuth = FirebaseAuth.getInstance();
+    //    databaseReference = FirebaseDatabase.getInstance().getReference("Riders");
 
         // Initialize input fields
         nameEditText = findViewById(R.id.nameEditText);
@@ -92,39 +92,39 @@ public class RiderRegistrationActivity extends AppCompatActivity {
                 }
 
                 // Register user with Firebase Authentication
-                mAuth.createUserWithEmailAndPassword(email, password)
-                        .addOnCompleteListener(task -> {
-                            if (task.isSuccessful()) {
-                                FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                                if (firebaseUser != null) {
-                                    // Save additional info to Realtime Database
-                                    String userId = firebaseUser.getUid();
-                                    HashMap<String, Object> userMap = new HashMap<>();
-                                    userMap.put("name", name);
-                                    userMap.put("email", email);
-                                    userMap.put("phone", phone);
-                                    userMap.put("address", address);
-                                    userMap.put("username", username);
-
-                                    databaseReference.child(userId).setValue(userMap)
-                                            .addOnCompleteListener(dbTask -> {
-                                                if (dbTask.isSuccessful()) {
-                                                    Toast.makeText(RiderRegistrationActivity.this,
-                                                            "Registration successful!", Toast.LENGTH_SHORT).show();
-                                                    // TODO: redirect to login page
-                                                } else {
-                                                    Toast.makeText(RiderRegistrationActivity.this,
-                                                            "Database error: " + dbTask.getException().getMessage(),
-                                                            Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                }
-                            } else {
-                                Toast.makeText(RiderRegistrationActivity.this,
-                                        "Registration failed: " + task.getException().getMessage(),
-                                        Toast.LENGTH_SHORT).show();
-                            }
-                        });
+//                mAuth.createUserWithEmailAndPassword(email, password)
+//                        .addOnCompleteListener(task -> {
+//                            if (task.isSuccessful()) {
+//                                FirebaseUser firebaseUser = mAuth.getCurrentUser();
+//                                if (firebaseUser != null) {
+//                                    // Save additional info to Realtime Database
+//                                    String userId = firebaseUser.getUid();
+//                                    HashMap<String, Object> userMap = new HashMap<>();
+//                                    userMap.put("name", name);
+//                                    userMap.put("email", email);
+//                                    userMap.put("phone", phone);
+//                                    userMap.put("address", address);
+//                                    userMap.put("username", username);
+//
+//                                    databaseReference.child(userId).setValue(userMap)
+//                                            .addOnCompleteListener(dbTask -> {
+//                                                if (dbTask.isSuccessful()) {
+//                                                    Toast.makeText(RiderRegistrationActivity.this,
+//                                                            "Registration successful!", Toast.LENGTH_SHORT).show();
+//                                                    // TODO: redirect to login page
+//                                                } else {
+//                                                    Toast.makeText(RiderRegistrationActivity.this,
+//                                                            "Database error: " + dbTask.getException().getMessage(),
+//                                                            Toast.LENGTH_SHORT).show();
+//                                                }
+//                                            });
+//                                }
+//                            } else {
+//                                Toast.makeText(RiderRegistrationActivity.this,
+//                                        "Registration failed: " + task.getException().getMessage(),
+//                                        Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
             }
         });
 
