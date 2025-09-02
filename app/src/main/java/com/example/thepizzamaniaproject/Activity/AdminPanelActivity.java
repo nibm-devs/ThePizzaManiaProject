@@ -1,5 +1,6 @@
 package com.example.thepizzamaniaproject.Activity;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -12,6 +13,7 @@ import com.example.thepizzamaniaproject.R;
 
 public class AdminPanelActivity extends AppCompatActivity {
 
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
