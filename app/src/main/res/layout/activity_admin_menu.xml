@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    tools:context=".Activity.AdminMenuActivity">
+
+  <!-- App Bar Layout -->
+  <com.google.android.material.appbar.AppBarLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:background="@drawable/toolbar_gradient"
+      android:elevation="8dp">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@null"
+        app:titleTextColor="@color/white"
+        app:subtitleTextColor="@color/white"
+        app:contentInsetStart="0dp"
+        app:contentInsetLeft="0dp">
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:orientation="horizontal"
+          android:paddingHorizontal="16dp"
+          android:gravity="center_vertical">
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_pizza_logo"
+            android:contentDescription="Pizza Mania Logo"
+            app:tint="@color/white" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="12dp">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Pizza Mania"
+              android:textColor="@color/white"
+              android:textSize="20sp"
+              android:textStyle="bold"
+              android:letterSpacing="0.02" />
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Admin Panel"
+              android:textColor="@color/white"
+              android:textSize="14sp"
+              android:alpha="0.9" />
+
+        </LinearLayout>
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_admin"
+            android:contentDescription="Admin"
+            app:tint="@color/white" />
+
+      </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+  </com.google.android.material.appbar.AppBarLayout>
+
+  <!-- Content -->
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical"
+      app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <!-- Stats Cards -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:paddingBottom="8dp">
+
+      <androidx.cardview.widget.CardView
+          style="@style/CardView.PizzaMania"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:layout_marginEnd="8dp"
+          app:cardBackgroundColor="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:gravity="center">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="25"
+              android:textColor="@color/primary_red"
+              android:textSize="24sp"
+              android:textStyle="bold" />
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Menu Items"
+              android:textColor="@color/dark_gray"
+              android:textSize="12sp"
+              android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+      </androidx.cardview.widget.CardView>
+
+      <androidx.cardview.widget.CardView
+          style="@style/CardView.PizzaMania"
+          android:layout_width="0dp"
+          android:layout_height="wrap_content"
+          android:layout_weight="1"
+          android:layout_marginStart="8dp"
+          app:cardBackgroundColor="@color/white">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:gravity="center">
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="18"
+              android:textColor="@color/primary_red"
+              android:textSize="24sp"
+              android:textStyle="bold" />
+
+          <TextView
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="Active Orders"
+              android:textColor="@color/dark_gray"
+              android:textSize="12sp"
+              android:layout_marginTop="4dp" />
+
+        </LinearLayout>
+
+      </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingBottom="16dp">
+
+      <Button
+          android:id="@+id/btnViewOrders"
+          style="@style/Button.PizzaMania"
+          android:layout_width="0dp"
+          android:layout_height="48dp"
+          android:layout_weight="1"
+          android:text="📋 View Orders"
+          android:layout_marginEnd="8dp"
+          android:drawablePadding="4dp" />
+
+      <Button
+          android:id="@+id/btnStats"
+          style="@style/Button.PizzaMania"
+          android:layout_width="0dp"
+          android:layout_height="48dp"
+          android:layout_weight="1"
+          android:text="📊 Analytics"
+          android:layout_marginStart="8dp"
+          android:drawablePadding="4dp" />
+
+    </LinearLayout>
+
+    <!-- Section Title -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Menu Items"
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="8dp" />
+
+    <!-- Menu Items List -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="8dp"
+        android:clipToPadding="false" />
+
+    <!-- Progress Bar -->
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_marginVertical="16dp"
+        android:indeterminateTint="@color/primary_red" />
+
+  </LinearLayout>
+
+  <!-- Add Item Button -->
+  <com.google.android.material.floatingactionbutton.FloatingActionButton
+      android:id="@+id/fabAddItem"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="bottom|end"
+      android:layout_margin="24dp"
+      android:src="@drawable/ic_add_white"
+      app:backgroundTint="@color/primary_red"
+      app:tint="@color/white"
+      app:elevation="8dp"
+      app:borderWidth="0dp"
+      app:maxImageSize="28dp"
+      app:rippleColor="@color/primary_red_light" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

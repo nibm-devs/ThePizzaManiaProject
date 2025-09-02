@@ -3,9 +3,54 @@
     <color name="primary_dark_secondary">#E64A19</color>
     <color name="accent_color_secondary">#FF9800</color>
     <color name="accent_dark_secondary">#F57C00</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
     <color name="primary_color">#667eea</color>
     <color name="gray_400">#9CA3AF</color>
     <color name="gray_600">#4B5563</color>
+
+
+
+        <color name="primary_dark">#BF360C</color>
+        <color name="accent_color">#FF9800</color>
+
+
+        <color name="light_gray_background">#F5F5F5</color>
+
+        <color name="success_green">#4CAF50</color>
+        <color name="error_red">#F44336</color>
+
+    <!-- Primary Colors -->
+    <color name="primary_red">#E74C3C</color>
+    <color name="primary_red_dark">#C0392B</color>
+    <color name="primary_red_light">#FF6B6B</color>
+
+    <!-- Secondary Colors -->
+    <color name="secondary_orange">#FF8C42</color>
+    <color name="secondary_yellow">#FFD166</color>
+
+    <!-- Neutral Colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="light_gray">#F8F9FA</color>
+    <color name="medium_gray">#E9ECEF</color>
+    <color name="dark_gray">#6C757D</color>
+    <color name="black">#212529</color>
+
+    <!-- Text Colors -->
+    <color name="text_primary">#212529</color>
+    <color name="text_secondary">#6C757D</color>
+    <color name="text_white">#FFFFFF</color>
+
+    <!-- Status Colors -->
+
+    <color name="warning_orange">#FD7E14</color>
+    <color name="info_blue">#17A2B8</color>
+
+    <!-- Background Colors -->
+    <color name="background_light">#F8F9FA</color>
+    <color name="background_white">#FFFFFF</color>
+    <color name="card_background">#FFFFFF</color>
+
+    <!-- Gradient Colors -->
+    <color name="gradient_start">#E74C3C</color>
+    <color name="gradient_end">#FF8C42</color>
+
 </resources>
