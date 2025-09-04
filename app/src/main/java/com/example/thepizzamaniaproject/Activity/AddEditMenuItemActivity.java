@@ -11,42 +11,42 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.thepizzamaniaproject.Domain.MenuItem;
 import com.example.thepizzamaniaproject.R;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
 import java.util.UUID;
 
 public class AddEditMenuItemActivity extends AppCompatActivity {
 
     private static final int PICK_IMAGE_REQUEST = 1;
-
-    private EditText etName, etDescription, etPrice;
-    private Spinner spinnerCategory;
-    private Button btnSave, btnSelectImage;
-    private ImageView ivPreview;
-
     private Uri imageUri;
     private MenuItem menuItem;
     private boolean isEditMode = false;
+
+    // View references
+    private EditText etName, etDescription, etPrice;
+    private AutoCompleteTextView autoCompleteCategory;
+    private Button btnSave;
+    private FrameLayout btnSelectImage;
+    private ImageButton btnBack;
+    private ImageView ivPreview;
 
     private FirebaseFirestore db;
     private StorageReference storageReference;
     private ProgressDialog progressDialog;
 
-    @SuppressLint({"WrongViewCast", "MissingInflatedId"})
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,13 +56,14 @@ public class AddEditMenuItemActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("menu_images");
 
-        // Initialize views
+        // Initialize views using findViewById
         etName = findViewById(R.id.etName);
         etDescription = findViewById(R.id.etDescription);
         etPrice = findViewById(R.id.etPrice);
-        spinnerCategory = findViewById(R.id.spinnerCategory);
+        autoCompleteCategory = findViewById(R.id.autoComplete);
         btnSave = findViewById(R.id.btnSave);
         btnSelectImage = findViewById(R.id.btnSelectImage);
+        btnBack = findViewById(R.id.btnBack);
         ivPreview = findViewById(R.id.ivPreview);
 
         // Setup progress dialog
@@ -70,11 +71,15 @@ public class AddEditMenuItemActivity extends AppCompatActivity {
         progressDialog.setMessage("Please wait...");
         progressDialog.setCancelable(false);
 
-        // Setup category spinner
+        // Setup category AutoCompleteTextView
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.categories_array, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCategory.setAdapter(adapter);
+                R.array.categories_array, android.R.layout.simple_dropdown_item_1line);
+        autoCompleteCategory.setAdapter(adapter);
+
+        // Set click listeners
+        btnBack.setOnClickListener(v -> onBackPressed());
+        btnSelectImage.setOnClickListener(v -> openImageChooser());
+        btnSave.setOnClickListener(v -> saveMenuItem());
 
         // Check if we're editing an existing item
         if (getIntent().hasExtra("menuItem")) {
@@ -84,9 +89,6 @@ public class AddEditMenuItemActivity extends AppCompatActivity {
         } else {
             menuItem = new MenuItem();
         }
-
-        btnSelectImage.setOnClickListener(v -> openImageChooser());
-        btnSave.setOnClickListener(v -> saveMenuItem());
     }
 
     private void openImageChooser() {
@@ -112,11 +114,12 @@ public class AddEditMenuItemActivity extends AppCompatActivity {
             etDescription.setText(menuItem.getDescription());
             etPrice.setText(String.valueOf(menuItem.getPrice()));
 
-            // Select the appropriate category in spinner
-            ArrayAdapter adapter = (ArrayAdapter) spinnerCategory.getAdapter();
-            int position = adapter.getPosition(menuItem.getCategory());
-            if (position >= 0) {
-                spinnerCategory.setSelection(position);
+            // Set category in AutoCompleteTextView
+            autoCompleteCategory.setText(menuItem.getCategory());
+
+            // Show existing image if available
+            if (menuItem.getImageUrl() != null && !menuItem.getImageUrl().isEmpty()) {
+                ivPreview.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -125,9 +128,9 @@ public class AddEditMenuItemActivity extends AppCompatActivity {
         String name = etName.getText().toString().trim();
         String description = etDescription.getText().toString().trim();
         String priceStr = etPrice.getText().toString().trim();
-        String category = spinnerCategory.getSelectedItem().toString();
+        String category = autoCompleteCategory.getText().toString().trim();
 
-        if (name.isEmpty() || description.isEmpty() || priceStr.isEmpty()) {
+        if (name.isEmpty() || description.isEmpty() || priceStr.isEmpty() || category.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -148,7 +151,6 @@ public class AddEditMenuItemActivity extends AppCompatActivity {
         if (imageUri != null) {
             uploadImageAndSaveItem();
         } else if (isEditMode && menuItem.getImageUrl() != null && !menuItem.getImageUrl().isEmpty()) {
-            // Keep existing image if editing and no new image selected
             saveMenuItemToFirebase(menuItem.getImageUrl());
         } else {
             Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
@@ -177,30 +179,28 @@ public class AddEditMenuItemActivity extends AppCompatActivity {
         menuItem.setImageUrl(imageUrl);
 
         if (isEditMode) {
-            // Update existing item
             db.collection("menuItems").document(menuItem.getId())
                     .set(menuItem)
                     .addOnSuccessListener(aVoid -> {
                         progressDialog.dismiss();
-                        Toast.makeText(AddEditMenuItemActivity.this, "Menu item updated successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Menu item updated successfully", Toast.LENGTH_SHORT).show();
                         finish();
                     })
                     .addOnFailureListener(e -> {
                         progressDialog.dismiss();
-                        Toast.makeText(AddEditMenuItemActivity.this, "Error updating item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Error updating item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         } else {
-            // Create new item
             db.collection("menuItems")
                     .add(menuItem)
                     .addOnSuccessListener(documentReference -> {
                         progressDialog.dismiss();
-                        Toast.makeText(AddEditMenuItemActivity.this, "Menu item added successfully", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Menu item added successfully", Toast.LENGTH_SHORT).show();
                         finish();
                     })
                     .addOnFailureListener(e -> {
                         progressDialog.dismiss();
-                        Toast.makeText(AddEditMenuItemActivity.this, "Error adding item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Error adding item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         }
     }

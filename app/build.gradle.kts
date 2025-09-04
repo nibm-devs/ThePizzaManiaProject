@@ -44,6 +44,8 @@ dependencies {
     implementation(libs.gridlayout)
     implementation(libs.firebase.firestore)
     implementation(libs.play.services.cast.framework)
+    implementation(libs.databinding.common)
+    implementation(libs.databinding.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
