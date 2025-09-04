@@ -190,11 +190,11 @@
                     <AutoCompleteTextView
                         android:id="@+id/autoComplete"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="47dp"
                         android:hint="Category"
+                        android:inputType="none"
                         android:textColor="@color/text_primary"
-                        android:textSize="14sp"
-                        android:inputType="none" />
+                        android:textSize="14sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Save Button -->
