@@ -274,6 +274,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cart"
+                        android:id="@+id/cartText"
                         android:textColor="#676767"
                         android:textSize="12sp" />
                 </LinearLayout>

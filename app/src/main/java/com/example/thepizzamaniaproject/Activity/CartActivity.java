@@ -105,11 +105,11 @@ public class CartActivity extends AppCompatActivity {
     private void highlightCurrentPage()
     {
 
-        View profileBtn = findViewById(R.id.profileBtn);
-        TextView profileText = profileBtn.findViewById(R.id.profileText);
+        View cartBtn = findViewById(R.id.cartBtn);
+        TextView cartText = cartBtn.findViewById(R.id.cartText);
 
 
-        profileText.setTextColor(Color.parseColor("#FF3D00"));
+        cartText.setTextColor(Color.parseColor("#FF3D00"));
 
     }
 
