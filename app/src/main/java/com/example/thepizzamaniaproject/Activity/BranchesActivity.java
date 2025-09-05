@@ -71,12 +71,12 @@ public class BranchesActivity extends AppCompatActivity {
             public void onClick(View v)
             {
                 // Navigate to home - finish current activity to go back
-                finish();
+                //finish();
 
                 // or start a new HomeActivity:
-//                 Intent intent = new Intent(BranchesActivity.this, HomeActivity.class);
-//                 startActivity(intent);
-//                 finish();
+                 Intent intent = new Intent(BranchesActivity.this, HomeActivity.class);
+                 startActivity(intent);
+                 finish();
             }
         });
 
