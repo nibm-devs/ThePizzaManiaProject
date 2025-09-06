@@ -22,6 +22,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ThePizzaManiaProject">
         <activity
+            android:name=".Activity.ProductsActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.AddEditMenuItemActivity"
             android:exported="false" />
         <activity
@@ -32,11 +35,10 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <activity
             android:name=".Activity.AdminLoginActivity"
             android:exported="false" />

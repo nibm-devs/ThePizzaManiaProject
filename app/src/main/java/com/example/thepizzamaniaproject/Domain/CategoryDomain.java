@@ -1,12 +1,14 @@
 package com.example.thepizzamaniaproject.Domain;
 
-public class CategoryDomain {
+public class CategoryDomain
+{
 
 
     private String title;
     private String picture;
 
-    public CategoryDomain(String title, String picture) {
+    public CategoryDomain(String title, String picture)
+    {
         this.title = title;
         this.picture = picture;
     }

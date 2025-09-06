@@ -24,13 +24,25 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
 
         ArrayList<CategoryDomain> categoryDomains;
+        private OnCategoryClickListener onCategoryClickListener;
 
+
+        // Interface for click events
+        public interface OnCategoryClickListener
+        {
+            void onCategoryClick(String categoryName);
+        }
 
         public CategoryAdapter(ArrayList<CategoryDomain> categoryDomains)
         {
             this.categoryDomains = categoryDomains;
         }
 
+        // Set the click listener
+        public void setOnCategoryClickListener(OnCategoryClickListener listener)
+        {
+            this.onCategoryClickListener = listener;
+        }
 
         @NonNull
         @Override
@@ -45,41 +57,47 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
         public void onBindViewHolder(@NonNull ViewHolder holder, int position)
         {
 
-            holder.categoryName.setText(categoryDomains.get(position).getTitle());
-            String picUrl = "cat_1";
-//            switch (position)
-//            {
-//                case 0 :
-//                {
-//                    picUrl = "cat_1";
-//                    break;
-//                }
-//                case 1 :
-//                {
-//                    picUrl = "cat_1";
-//                    break;
-//                }
-//                case 2 :
-//                {
-//                    picUrl = "cat_3";
-//                    break;
-//                }
-//                case 3 :
-//                {
-//                    picUrl = "cat_4";
-//                    break;
-//                }
-//                case 4 :
-//                {
-//                    picUrl = "cat_5";
-//                    break;
-//                }
-//            }
+//            holder.categoryName.setText(categoryDomains.get(position).getTitle());
+//            String picUrl = "cat_1";
 
-            int drawableResourceId = holder.itemView.getContext().getResources().getIdentifier(picUrl,"drawable",holder.itemView.getContext().getPackageName());
+
+            // Get the category at this position
+            CategoryDomain category = categoryDomains.get(position);
+
+            // Set category name
+            holder.categoryName.setText(category.getTitle());
+
+            // Use the actual picture from the category object
+            String picUrl = category.getPicture(); // This should be like "cat_1", "cat_2", etc.
+
+//            int drawableResourceId = holder.itemView.getContext().getResources().getIdentifier(picUrl,"drawable",holder.itemView.getContext().getPackageName());
+//            Glide.with(holder.itemView.getContext())
+//                    .load(drawableResourceId)
+//                    .into(holder.categoryPic);
+
+            // Load the image using Glide
+            int drawableResourceId = holder.itemView.getContext().getResources()
+                    .getIdentifier(picUrl, "drawable", holder.itemView.getContext().getPackageName());
+
             Glide.with(holder.itemView.getContext())
                     .load(drawableResourceId)
                     .into(holder.categoryPic);
+
+
+
+
+            // Set click listener on the main layout
+            holder.mainLayout.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    if (onCategoryClickListener != null)
+                    {
+                        onCategoryClickListener.onCategoryClick(category.getTitle());
+                    }
+                }
+            });
 
 
         }

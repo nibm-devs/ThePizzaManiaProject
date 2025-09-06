@@ -25,9 +25,11 @@ import com.example.thepizzamaniaproject.R;
 
 import java.util.ArrayList;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements CategoryAdapter.OnCategoryClickListener {
 
-    private RecyclerView.Adapter adapter,adapter2;
+//    private RecyclerView.Adapter adapter,adapter2;
+    private CategoryAdapter adapter;
+    private RecyclerView.Adapter adapter2;
     private RecyclerView recyclerViewCategoryList, recyclerViewRecommendedList;
     private ImageView profileImage;
     private TextView userNameText;
@@ -50,6 +52,9 @@ public class HomeActivity extends AppCompatActivity {
 //
 //        });
 
+
+        // Initialize the "See more" TextView
+        TextView seeMoreText = findViewById(R.id.txtseemore);
 
 
         // Initialize helpers
@@ -165,6 +170,22 @@ public class HomeActivity extends AppCompatActivity {
         });
 
 
+
+        // click "See more" text
+        seeMoreText.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                // Navigate to ProductActivity
+                Intent intent = new Intent(HomeActivity.this, ProductsActivity.class);
+                startActivity(intent);
+
+                // Optional: Add a slide animation
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+        });
+
+
     }
 
 
@@ -260,16 +281,30 @@ public class HomeActivity extends AppCompatActivity {
         recyclerViewCategoryList.setLayoutManager(linearLayoutManager);
 
         ArrayList<CategoryDomain> categoryList = new ArrayList<>();
+        categoryList.add(new CategoryDomain("New","cat_1"));
         categoryList.add(new CategoryDomain("DELIGHT","cat_1"));
-        categoryList.add(new CategoryDomain("Classic","cat_2"));
+        categoryList.add(new CategoryDomain("Classic","cat_1"));
         categoryList.add(new CategoryDomain("Signature","cat_1"));
         categoryList.add(new CategoryDomain("Favourites","cat_1"));
         categoryList.add(new CategoryDomain("Supreme","cat_1"));
-        categoryList.add(new CategoryDomain("Cheese","cat_1"));
+
 
         adapter = new CategoryAdapter(categoryList);
+        adapter.setOnCategoryClickListener(this); // Set the click listener
         recyclerViewCategoryList.setAdapter(adapter);
 
+    }
+
+
+    @Override
+    public void onCategoryClick(String categoryName) {
+        // Navigate to ProductsActivity with the selected category
+        Intent intent = new Intent(HomeActivity.this, ProductsActivity.class);
+        intent.putExtra("SELECTED_CATEGORY", categoryName);
+        startActivity(intent);
+
+        // Optional: Add animation
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
 
@@ -288,8 +323,8 @@ public class HomeActivity extends AppCompatActivity {
         adapter2 = new RecommendedAdapter(pizzaList);
         recyclerViewRecommendedList.setAdapter(adapter2);
 
-
     }
+
 
 
 
