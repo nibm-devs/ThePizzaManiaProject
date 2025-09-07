@@ -8,12 +8,29 @@
     android:background="#ECEBE6"
     tools:context=".Activity.ProductsActivity">
 
+    <!-- Pizzas Header -->
+    <TextView
+        android:id="@+id/pizzasHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pizzas"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        android:textColor="#ff3d00"
+        android:paddingStart="35dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:id="@+id/scrollView"
         app:layout_constraintBottom_toTopOf="@+id/coordinatorLayout"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="100dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,16 +38,17 @@
             android:orientation="vertical" >
 
             <!-- Header -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="50dp"
-                android:layout_marginBottom="25dp"
-                android:textSize="30sp"
-                android:textStyle="bold"
-                android:textColor="#ff3d00"
-                android:paddingStart="35dp"
-                android:text="Pizzas" />
+<!--            <TextView-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="50dp"-->
+<!--                android:layout_marginBottom="25dp"-->
+<!--                android:textSize="30sp"-->
+<!--                android:textStyle="bold"-->
+<!--                android:textColor="#ff3d00"-->
+<!--                android:paddingStart="35dp"-->
+<!--                android:text="Pizzas" />-->
+
 
             <!-- New Arrivals Section -->
             <LinearLayout
