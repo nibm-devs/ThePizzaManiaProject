@@ -7,9 +7,11 @@
     <color name="primary_color">#667eea</color>
     <color name="primary_dark">#BF360C</color>
     <color name="primary_dark_secondary">#5a67d8</color>
+    <color name="primary">#2196F3</color>
 
 
     <!-- Accent Colors -->
+    <color name="accent">#FF4081</color>
     <color name="accent_color">#FF9800</color>
     <color name="accent_dark_secondary">#F57C00</color>
     <color name="secondary_orange">#FF8C42</color>
@@ -17,6 +19,9 @@
     <color name="accent_color_secondary">#F57C00</color>
 
     <!-- Neutral Colors -->
+    <color name="error">#F44336</color>
+    <color name="background">#FAFAFA</color>
+    <color name="gray">#9E9E9E</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#212529</color>
     <color name="gray_400">#9CA3AF</color>

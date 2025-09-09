@@ -11,6 +11,7 @@
         <item>Drinks</item>
         <item>Desserts</item>
     </string-array>
+    <string name="title_activity_location_picker">LocationPickerActivity</string>
 
     <!-- In strings.xml -->
     <!-- <string name="app_name">My App</string> -->
