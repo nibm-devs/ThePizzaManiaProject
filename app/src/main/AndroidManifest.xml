@@ -48,6 +48,9 @@
             android:exported="false"
             android:label="@string/app_name"/>
         <activity
+            android:name=".Activity.PizzaDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.ProductsActivity"
             android:exported="false" />
         <activity
