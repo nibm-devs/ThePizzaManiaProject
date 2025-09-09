@@ -81,7 +81,8 @@ public class ProductsActivity extends AppCompatActivity {
 
 
         // Cart button
-        findViewById(R.id.cartBtn).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.cartBtn).setOnClickListener(new View.OnClickListener()
+        {
             @Override
             public void onClick(View v)
             {
