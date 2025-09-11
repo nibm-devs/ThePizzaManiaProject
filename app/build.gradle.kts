@@ -47,10 +47,14 @@ dependencies {
     implementation(libs.play.services.cast.framework)
     implementation(libs.databinding.common)
     implementation(libs.databinding.runtime)
+    implementation(libs.play.services.maps)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation("com.google.android.material:material:1.12.0")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.google.code.gson:gson:2.10.1")
+
+    // In your app-level build.gradle
+    implementation("com.google.firebase:firebase-database:20.2.2")
 }
