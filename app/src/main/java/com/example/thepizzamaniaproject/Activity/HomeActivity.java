@@ -273,7 +273,6 @@ public class HomeActivity extends AppCompatActivity implements CategoryAdapter.O
     }
 
 
-
     private void recyclerViewCategory()
     {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
@@ -315,9 +314,9 @@ public class HomeActivity extends AppCompatActivity implements CategoryAdapter.O
         recyclerViewRecommendedList.setLayoutManager(linearLayoutManager);
 
         ArrayList<PizzaDomain> pizzaList = new ArrayList<>();
-        pizzaList.add(new PizzaDomain("Margherita","pizza_recommended01","A hugely popular margherita, with a deliciously tangy single cheese topping",3200.00,5,20));
-        pizzaList.add(new PizzaDomain("Pepperoni Pizza","pizza_recommended02","A hugely popular margherita, with a deliciously tangy single cheese topping",3800.00,4,18));
-        pizzaList.add(new PizzaDomain("Cheese Pizza","pizza_recommended03","A hugely popular margherita, with a deliciously tangy single cheese topping",3600.00,3,16));
+        pizzaList.add(new PizzaDomain("Margherita","pizza_recommended01","A hugely popular margherita, with a deliciously tangy single cheese topping",3200.00,4.5,20,"Classic"));
+        pizzaList.add(new PizzaDomain("Pepperoni Pizza","pizza_recommended02","A hugely popular margherita, with a deliciously tangy single cheese topping",3800.00,4.8,18,"Classic"));
+        pizzaList.add(new PizzaDomain("Cheese Pizza","pizza_recommended03","A hugely popular margherita, with a deliciously tangy single cheese topping",3600.00,4.2,16,"Favorite"));
 
 
         adapter2 = new RecommendedAdapter(pizzaList);

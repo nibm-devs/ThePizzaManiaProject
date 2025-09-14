@@ -30,6 +30,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    buildFeatures {
+        viewBinding = true
+    }
+
 }
 
 dependencies {
@@ -57,4 +62,6 @@ dependencies {
 
     // In your app-level build.gradle
     implementation("com.google.firebase:firebase-database:20.2.2")
+
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 }

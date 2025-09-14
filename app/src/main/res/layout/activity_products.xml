@@ -90,7 +90,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginBottom="20dp"
+                android:nestedScrollingEnabled="false"/>
 
             <!-- DELIGHT Section -->
             <LinearLayout
@@ -130,7 +131,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginBottom="20dp"
+                android:nestedScrollingEnabled="false"/>
 
             <!-- Classic Section -->
             <LinearLayout
@@ -170,7 +172,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginBottom="20dp"
+                android:nestedScrollingEnabled="false"/>
 
             <!-- Signature Section -->
             <LinearLayout
@@ -210,7 +213,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginBottom="20dp"
+                android:nestedScrollingEnabled="false"/>
 
             <!-- Favourites Section -->
             <LinearLayout
@@ -250,7 +254,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="20dp" />
+                android:layout_marginBottom="20dp"
+                android:nestedScrollingEnabled="false"/>
 
             <!-- Supreme Section -->
             <LinearLayout
@@ -290,7 +295,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="220dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginBottom="30dp" />
+                android:layout_marginBottom="30dp"
+                android:nestedScrollingEnabled="false"/>
         </LinearLayout>
     </ScrollView>
 

@@ -1,24 +1,33 @@
 package com.example.thepizzamaniaproject.Domain;
 
-public class PizzaDomain {
+import java.io.Serializable;
+
+public class PizzaDomain implements Serializable {
 
     private String title;
     private String picture;
     private String description;
     private Double price;
-    private int star;
+    private Double star;
     private int time;
+    private String category;
 
+
+    public PizzaDomain()
+    {
+
+    }
 
 
     // Constructor
-    public PizzaDomain(String title, String picture, String description, Double price, int star, int time) {
+    public PizzaDomain(String title, String picture, String description, Double price, Double star, int time, String category) {
         this.title = title;
         this.picture = picture;
         this.description = description;
         this.price = price;
         this.star = star;
         this.time = time;
+        this.category = category;
     }
 
 
@@ -39,7 +48,7 @@ public class PizzaDomain {
         return price;
     }
 
-    public int getStar() {
+    public Double getStar() {
         return star;
     }
 
@@ -47,6 +56,9 @@ public class PizzaDomain {
         return time;
     }
 
+    public String getCategory() {
+        return category;
+    }
 
     // Setters
     public void setTitle(String title) {
@@ -65,11 +77,15 @@ public class PizzaDomain {
         this.price = price;
     }
 
-    public void setStar(int star) {
+    public void setStar(Double star) {
         this.star = star;
     }
 
     public void setTime(int time) {
         this.time = time;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }
