@@ -88,7 +88,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/newArrivalsRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="20dp"
                 android:nestedScrollingEnabled="false"/>
@@ -129,7 +129,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/delightRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="20dp"
                 android:nestedScrollingEnabled="false"/>
@@ -170,7 +170,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/classicRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="20dp"
                 android:nestedScrollingEnabled="false"/>
@@ -211,7 +211,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/signatureRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="20dp"
                 android:nestedScrollingEnabled="false"/>
@@ -252,7 +252,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/favouritesRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="20dp"
                 android:nestedScrollingEnabled="false"/>
@@ -293,7 +293,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/supremeRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="220dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="30dp"
                 android:nestedScrollingEnabled="false"/>

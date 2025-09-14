@@ -105,7 +105,7 @@ public class ProductsActivity extends AppCompatActivity {
             // Initialize adapters only for existing RecyclerViews
             if (newArrivalsRecyclerView != null) {
                 newArrivalsRecyclerView.setLayoutManager(new LinearLayoutManager(
-                        this, LinearLayoutManager.HORIZONTAL, false));
+                        this, LinearLayoutManager.VERTICAL, false));
                 newArrivalsAdapter = new PizzaAdapter(new ArrayList<>());
                 newArrivalsRecyclerView.setAdapter(newArrivalsAdapter);
                 Log.d(TAG, "New Arrivals RecyclerView initialized");
@@ -113,7 +113,7 @@ public class ProductsActivity extends AppCompatActivity {
 
             if (delightRecyclerView != null) {
                 delightRecyclerView.setLayoutManager(new LinearLayoutManager(
-                        this, LinearLayoutManager.HORIZONTAL, false));
+                        this, LinearLayoutManager.VERTICAL, false));
                 delightAdapter = new PizzaAdapter(new ArrayList<>());
                 delightRecyclerView.setAdapter(delightAdapter);
                 Log.d(TAG, "Delight RecyclerView initialized");
@@ -121,7 +121,7 @@ public class ProductsActivity extends AppCompatActivity {
 
             if (classicRecyclerView != null) {
                 classicRecyclerView.setLayoutManager(new LinearLayoutManager(
-                        this, LinearLayoutManager.HORIZONTAL, false));
+                        this, LinearLayoutManager.VERTICAL, false));
                 classicAdapter = new PizzaAdapter(new ArrayList<>());
                 classicRecyclerView.setAdapter(classicAdapter);
                 Log.d(TAG, "Classic RecyclerView initialized");
@@ -129,7 +129,7 @@ public class ProductsActivity extends AppCompatActivity {
 
             if (signatureRecyclerView != null) {
                 signatureRecyclerView.setLayoutManager(new LinearLayoutManager(
-                        this, LinearLayoutManager.HORIZONTAL, false));
+                        this, LinearLayoutManager.VERTICAL, false));
                 signatureAdapter = new PizzaAdapter(new ArrayList<>());
                 signatureRecyclerView.setAdapter(signatureAdapter);
                 Log.d(TAG, "Signature RecyclerView initialized");
@@ -137,7 +137,7 @@ public class ProductsActivity extends AppCompatActivity {
 
             if (favouritesRecyclerView != null) {
                 favouritesRecyclerView.setLayoutManager(new LinearLayoutManager(
-                        this, LinearLayoutManager.HORIZONTAL, false));
+                        this, LinearLayoutManager.VERTICAL, false));
                 favouritesAdapter = new PizzaAdapter(new ArrayList<>());
                 favouritesRecyclerView.setAdapter(favouritesAdapter);
                 Log.d(TAG, "Favourites RecyclerView initialized");
@@ -145,7 +145,7 @@ public class ProductsActivity extends AppCompatActivity {
 
             if (supremeRecyclerView != null) {
                 supremeRecyclerView.setLayoutManager(new LinearLayoutManager(
-                        this, LinearLayoutManager.HORIZONTAL, false));
+                        this, LinearLayoutManager.VERTICAL, false));
                 supremeAdapter = new PizzaAdapter(new ArrayList<>());
                 supremeRecyclerView.setAdapter(supremeAdapter);
                 Log.d(TAG, "Supreme RecyclerView initialized");
