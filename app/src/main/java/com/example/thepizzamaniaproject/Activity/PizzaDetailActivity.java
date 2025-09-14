@@ -5,9 +5,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
+import com.example.thepizzamaniaproject.Helper.CartManager;
 import com.example.thepizzamaniaproject.Domain.PizzaDomain;
 import com.example.thepizzamaniaproject.R;
 
@@ -120,6 +123,23 @@ public class PizzaDetailActivity extends AppCompatActivity {
         }
     }
 
+//    private void addToCart() {
+//        TextView txtItemQuantity = findViewById(R.id.txtItemQuantity);
+//        int quantity = 1;
+//
+//        if (txtItemQuantity != null) {
+//            try {
+//                quantity = Integer.parseInt(txtItemQuantity.getText().toString());
+//            } catch (NumberFormatException e) {
+//                quantity = 1;
+//            }
+//        }
+//
+//        // TODO: Implement cart logic
+//        android.widget.Toast.makeText(this, "Added to cart: " + pizza.getTitle(), android.widget.Toast.LENGTH_SHORT).show();
+//    }
+
+
     private void addToCart() {
         TextView txtItemQuantity = findViewById(R.id.txtItemQuantity);
         int quantity = 1;
@@ -132,8 +152,24 @@ public class PizzaDetailActivity extends AppCompatActivity {
             }
         }
 
-        // TODO: Implement cart logic
-        android.widget.Toast.makeText(this, "Added to cart: " + pizza.getTitle(), android.widget.Toast.LENGTH_SHORT).show();
+        // Create a new PizzaDomain object and set its properties
+        PizzaDomain pizzaToAdd = new PizzaDomain();
+        pizzaToAdd.setTitle(pizza.getTitle());
+        pizzaToAdd.setDescription(pizza.getDescription());
+        pizzaToAdd.setPrice(pizza.getPrice());
+        pizzaToAdd.setPicture(pizza.getPicture());
+        pizzaToAdd.setStar(pizza.getStar());
+        pizzaToAdd.setTime(pizza.getTime());
+        pizzaToAdd.setQuantity(quantity);
+        pizzaToAdd.setCategory(pizza.getCategory()); // If you have category field
+
+        boolean added = CartManager.getInstance().addToCart(pizzaToAdd);
+
+        if (added) {
+            Toast.makeText(this, pizza.getTitle() + " added to cart", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, pizza.getTitle() + " is already in cart", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setupBottomNavigation() {

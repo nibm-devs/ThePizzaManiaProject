@@ -8,13 +8,22 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.thepizzamaniaproject.Adapter.CartAdapter;
+import com.example.thepizzamaniaproject.Helper.CartManager;
+import com.example.thepizzamaniaproject.Domain.PizzaDomain;
 import com.example.thepizzamaniaproject.R;
 
+import java.util.List;
+
 public class CartActivity extends AppCompatActivity {
+
+    // Declare all variables at class level
+    private TextView itemsTotalTextView, taxTextView, deliveryTextView, totalTextView;
+    private RecyclerView recyclerView;
+    private CartAdapter cartAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +38,27 @@ public class CartActivity extends AppCompatActivity {
 //            return insets;
 //        });
 
+
+        // Initialize views
+        itemsTotalTextView = findViewById(R.id.itemsTotalTextView);
+        taxTextView = findViewById(R.id.taxTextView);
+        deliveryTextView = findViewById(R.id.deliveryTextView);
+        totalTextView = findViewById(R.id.totalTextView);
+
+        // Setup RecyclerView
+        recyclerView = findViewById(R.id.view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Get cart items
+        List<PizzaDomain> cartItems = CartManager.getInstance().getCartItems();
+        cartAdapter = new CartAdapter(cartItems, this);
+        recyclerView.setAdapter(cartAdapter);
+
+        // Update totals
+        updateCartTotals();
+
+        // Get cart items and setup adapter
+        setupCartAdapter();
 
 
         // Highlight current page
@@ -101,6 +131,32 @@ public class CartActivity extends AppCompatActivity {
     }
 
 
+    private void setupCartAdapter() {
+        List<PizzaDomain> cartItems = CartManager.getInstance().getCartItems();
+        cartAdapter = new CartAdapter(cartItems, this);
+        recyclerView.setAdapter(cartAdapter);
+    }
+
+
+    public void updateCartTotals() {
+        List<PizzaDomain> cartItems = CartManager.getInstance().getCartItems();
+        double itemsTotal = 0;
+
+        for (PizzaDomain pizza : cartItems) {
+            itemsTotal += pizza.getPrice() * pizza.getQuantity();
+        }
+
+        double tax = itemsTotal * 0.1; // 10% tax
+        double delivery = itemsTotal > 0 ? 350 : 0; // Rs.350 delivery charge if items exist
+        double total = itemsTotal + tax + delivery;
+
+        itemsTotalTextView.setText("Rs." + String.format("%.2f", itemsTotal));
+        taxTextView.setText("Rs." + String.format("%.2f", tax));
+        deliveryTextView.setText("Rs." + String.format("%.2f", delivery));
+        totalTextView.setText("Rs." + String.format("%.2f", total));
+    }
+
+
     // To highlight the current page text
     private void highlightCurrentPage()
     {
@@ -113,6 +169,16 @@ public class CartActivity extends AppCompatActivity {
 
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Refresh the cart when returning to this activity
+        if (cartAdapter != null) {
+            cartAdapter.notifyDataSetChanged();
+            updateCartTotals();
+        }
+    }
 
 
 }

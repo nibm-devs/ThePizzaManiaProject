@@ -1,89 +1,97 @@
 package com.example.thepizzamaniaproject.Adapter;
 
-
+import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.bumptech.glide.Glide;
+import com.example.thepizzamaniaproject.Activity.PizzaDetailActivity;
 import com.example.thepizzamaniaproject.Domain.PizzaDomain;
 import com.example.thepizzamaniaproject.R;
+import java.util.List;
 
-import java.util.ArrayList;
+public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.ViewHolder> {
+    private List<PizzaDomain> pizzaList;
+    private Context context;
 
-public class RecommendedAdapter extends RecyclerView.Adapter<RecommendedAdapter.ViewHolder>
-{
+    // Interface for click events
+    public interface OnItemClickListener {
+        void onItemClick(PizzaDomain pizza);
+    }
 
+    private OnItemClickListener listener;
 
-        ArrayList<PizzaDomain> RecommendedDomains;
+    public RecommendedAdapter(List<PizzaDomain> pizzaList) {
+        this.pizzaList = pizzaList;
+    }
 
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
-        public RecommendedAdapter(ArrayList<PizzaDomain> pizzaDomains)
-        {
-            this.RecommendedDomains = pizzaDomains;
-        }
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        context = parent.getContext();
+        View view = LayoutInflater.from(context).inflate(R.layout.viewholder_recommended, parent, false);
+        return new ViewHolder(view);
+    }
 
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        PizzaDomain pizza = pizzaList.get(position);
 
-        @NonNull
-        @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
-        {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.viewholder_recommended,parent,false);
-            return new ViewHolder(view);
-        }
+        holder.title.setText(pizza.getTitle());
+        holder.price.setText("Rs." + String.format("%.2f", pizza.getPrice()));
 
+        // Load image using Glide
+        Glide.with(context)
+                .load(pizza.getPicture())
+                .placeholder(R.drawable.pizza1)
+                .error(R.drawable.pizza1)
+                .into(holder.pic);
 
-        @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position)
-        {
-
-            holder.title.setText(RecommendedDomains.get(position).getTitle());
-            holder.price.setText(String.valueOf(RecommendedDomains.get(position).getPrice()));
-
-
-            int drawableResourceId = holder.itemView.getContext().getResources().getIdentifier(RecommendedDomains.get(position).getPicture(),"drawable",holder.itemView.getContext().getPackageName());
-            Glide.with(holder.itemView.getContext())
-                    .load(drawableResourceId)
-                    .into(holder.pic);
-
-
-        }
-
-
-        @Override
-        public int getItemCount()
-        {
-            return RecommendedDomains.size();
-        }
-
-
-        public class ViewHolder extends RecyclerView.ViewHolder
-        {
-
-            TextView title,price;
-            ImageView pic;
-            ImageView addBtn;
-
-
-
-            public ViewHolder(@NonNull View itemView)
-            {
-                super(itemView);
-
-                title = itemView.findViewById(R.id.title);
-                pic = itemView.findViewById(R.id.pic);
-                price = itemView.findViewById(R.id.price);
-                addBtn = itemView.findViewById(R.id.addBtn);
-   
-
+        // Set click listener for the entire item
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(pizza);
             }
+        });
+
+        // Set click listener for the add button
+        holder.addBtn.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onItemClick(pizza);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return pizzaList.size();
+    }
+
+    public void updatePizzas(List<PizzaDomain> newPizzas) {
+        this.pizzaList.clear();
+        this.pizzaList.addAll(newPizzas);
+        notifyDataSetChanged();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        ImageView pic, addBtn;
+        TextView title, price;
+
+        public ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            pic = itemView.findViewById(R.id.pic);
+            title = itemView.findViewById(R.id.title);
+            price = itemView.findViewById(R.id.price);
+            addBtn = itemView.findViewById(R.id.addBtn);
         }
-
-
-
+    }
 }

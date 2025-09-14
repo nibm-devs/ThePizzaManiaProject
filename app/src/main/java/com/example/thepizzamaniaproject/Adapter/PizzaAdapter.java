@@ -9,10 +9,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.thepizzamaniaproject.Activity.PizzaDetailActivity;
+import com.example.thepizzamaniaproject.Helper.CartManager;
 import com.example.thepizzamaniaproject.Domain.PizzaDomain;
 import com.example.thepizzamaniaproject.R;
 import java.util.List;
@@ -48,8 +50,26 @@ public class PizzaAdapter extends RecyclerView.Adapter<PizzaAdapter.ViewHolder> 
                     .error(R.drawable.pizza1)
                     .into(holder.pizzaImage);
 
+            // Handle add to cart button click
             holder.addToCartBtn.setOnClickListener(v -> {
-                // Handle add to cart functionality
+                // Create a new PizzaDomain object and set its properties
+                PizzaDomain pizzaToAdd = new PizzaDomain();
+                pizzaToAdd.setTitle(pizza.getTitle());
+                pizzaToAdd.setDescription(pizza.getDescription());
+                pizzaToAdd.setPrice(pizza.getPrice());
+                pizzaToAdd.setPicture(pizza.getPicture());
+                pizzaToAdd.setStar(pizza.getStar());
+                pizzaToAdd.setTime(pizza.getTime());
+                pizzaToAdd.setQuantity(1);  // Default quantity
+                pizzaToAdd.setCategory(pizza.getCategory()); // If you have category field
+
+                boolean added = CartManager.getInstance().addToCart(pizzaToAdd);
+
+                if (added) {
+                    Toast.makeText(context, pizza.getTitle() + " added to cart", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, pizza.getTitle() + " is already in cart", Toast.LENGTH_SHORT).show();
+                }
             });
 
             holder.itemView.setOnClickListener(v -> {
@@ -85,7 +105,7 @@ public class PizzaAdapter extends RecyclerView.Adapter<PizzaAdapter.ViewHolder> 
             pizzaImage = itemView.findViewById(R.id.imageView5);
             txtTitle = itemView.findViewById(R.id.txtTitle);
             txtDescription = itemView.findViewById(R.id.txtDescription);
-            addToCartBtn = itemView.findViewById(R.id.colomboFindButton);
+            addToCartBtn = itemView.findViewById(R.id.addToCartBtn);
         }
     }
 }

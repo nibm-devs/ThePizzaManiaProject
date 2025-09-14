@@ -4,12 +4,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -22,14 +24,22 @@ import com.example.thepizzamaniaproject.Domain.UserDomain;
 import com.example.thepizzamaniaproject.Helper.DatabaseHelper;
 import com.example.thepizzamaniaproject.Helper.SessionManager;
 import com.example.thepizzamaniaproject.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
-public class HomeActivity extends AppCompatActivity implements CategoryAdapter.OnCategoryClickListener {
+public class HomeActivity extends AppCompatActivity implements CategoryAdapter.OnCategoryClickListener, RecommendedAdapter.OnItemClickListener {
 
-//    private RecyclerView.Adapter adapter,adapter2;
+    private static final String TAG = "HomeActivity";
     private CategoryAdapter adapter;
-    private RecyclerView.Adapter adapter2;
+    private RecommendedAdapter adapter2;
     private RecyclerView recyclerViewCategoryList, recyclerViewRecommendedList;
     private ImageView profileImage;
     private TextView userNameText;
@@ -38,142 +48,98 @@ public class HomeActivity extends AppCompatActivity implements CategoryAdapter.O
     private DatabaseHelper databaseHelper;
     private UserDomain currentUser;
 
+    // Firebase reference
+    private DatabaseReference pizzasRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_home);
 
-//        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-//            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-//            return insets;
-//
-//
-//        });
-
-
         // Initialize the "See more" TextView
         TextView seeMoreText = findViewById(R.id.txtseemore);
 
+        // Initialize Firebase
+        pizzasRef = FirebaseDatabase.getInstance().getReference("pizzas");
 
         // Initialize helpers
         sessionManager = new SessionManager(this);
         databaseHelper = new DatabaseHelper(this);
 
-
         // Check if user is logged in
-        if (!sessionManager.isLoggedIn())
-        {
+        if (!sessionManager.isLoggedIn()) {
             goToLoginActivity();
             return;
         }
 
-
         // Load current user data
         loadCurrentUser();
-
 
         // Initialize views
         profileImage = findViewById(R.id.imageView3);
         userNameText = findViewById(R.id.textView6); // The "Hi! Name" text
 
-
         // Load user data to home page
         loadUserData();
 
-
         recyclerViewCategory();
-        recyclerViewPopuler();
-
+        loadRecommendedPizzas(); // Replaced recyclerViewPopuler()
 
         // Initialize profile image
         profileImage = findViewById(R.id.imageView3);
 
         // Set click listener for profile image
-        profileImage.setOnClickListener(new View.OnClickListener()
-        {
+        profileImage.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 goToProfileActivity();
             }
         });
 
-
-
         // Highlight current page
         highlightCurrentPage();
 
-
         // Home button
-        findViewById(R.id.homeBtn).setOnClickListener(new View.OnClickListener()
-        {
+        findViewById(R.id.homeBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 highlightCurrentPage();
             }
         });
 
-
         // Profile button
-        findViewById(R.id.profileBtn).setOnClickListener(new View.OnClickListener()
-        {
+        findViewById(R.id.profileBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 // Navigate to profile
                 Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
                 startActivity(intent);
-
             }
         });
 
-
         // Cart button
-        findViewById(R.id.cartBtn).setOnClickListener(new View.OnClickListener()
-        {
+        findViewById(R.id.cartBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 // Navigate to cart
                 Intent intent = new Intent(HomeActivity.this, CartActivity.class);
                 startActivity(intent);
-
             }
         });
 
-
-        // Settings button
-//        findViewById(R.id.settingsBtn).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                // Navigate to settings
-//                Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-//                startActivity(intent);
-//
-//            }
-//        });
-
-
         // Branches button
-        findViewById(R.id.branchesBtn).setOnClickListener(new View.OnClickListener()
-        {
+        findViewById(R.id.branchesBtn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 // Navigate to branches
-                Intent intent = new Intent(HomeActivity.this,BranchesActivity.class);
+                Intent intent = new Intent(HomeActivity.this, BranchesActivity.class);
                 startActivity(intent);
             }
         });
 
-
-
         // click "See more" text
-        seeMoreText.setOnClickListener(new View.OnClickListener()
-        {
+        seeMoreText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Navigate to ProductActivity
@@ -184,38 +150,27 @@ public class HomeActivity extends AppCompatActivity implements CategoryAdapter.O
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
-
-
     }
 
-
     // Load current user data
-    private void loadCurrentUser()
-    {
+    private void loadCurrentUser() {
         String userEmail = sessionManager.getUserEmail();
-        if (userEmail != null)
-        {
+        if (userEmail != null) {
             currentUser = databaseHelper.getUserByEmail(userEmail);
 
-            if (currentUser == null)
-            {
+            if (currentUser == null) {
                 Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show();
                 sessionManager.logoutUser();
                 goToLoginActivity();
             }
-        }
-        else
-        {
+        } else {
             goToLoginActivity();
         }
     }
 
-
     // Load user data to home page
-    private void loadUserData()
-    {
-        if (currentUser != null)
-        {
+    private void loadUserData() {
+        if (currentUser != null) {
             // Get first name only
             String fullName = currentUser.getName();
             String firstName = fullName.split(" ")[0]; // Gets first word
@@ -223,77 +178,57 @@ public class HomeActivity extends AppCompatActivity implements CategoryAdapter.O
             userNameText.setText("Hi! " + firstName);
 
             // Load profile image if exists
-            if (currentUser.getProfileImage() != null && !currentUser.getProfileImage().isEmpty())
-            {
-                try
-                {
+            if (currentUser.getProfileImage() != null && !currentUser.getProfileImage().isEmpty()) {
+                try {
                     profileImage.setImageURI(Uri.parse(currentUser.getProfileImage()));
-                }
-                catch (Exception e)
-                {
+                } catch (Exception e) {
                     // Use default image if error
                     profileImage.setImageResource(R.drawable.profile);
                 }
-            }
-            else
-            {
+            } else {
                 // Set default image if no image exists
                 profileImage.setImageResource(R.drawable.profile);
             }
         }
     }
 
-
-
-    private void goToLoginActivity()
-    {
+    private void goToLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
     }
 
     // when profile pic click go to profile interface
-    private void goToProfileActivity()
-    {
+    private void goToProfileActivity() {
         Intent intent = new Intent(HomeActivity.this, ProfileActivity.class);
         startActivity(intent);
     }
 
-
-
     // To highlight the current page text
-    private void highlightCurrentPage()
-    {
-
+    private void highlightCurrentPage() {
         View homeBtn = findViewById(R.id.homeBtn);
         TextView homeText = homeBtn.findViewById(R.id.homeText);
 
         homeText.setTextColor(Color.parseColor("#FF3D00"));
-
     }
 
-
-    private void recyclerViewCategory()
-    {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+    private void recyclerViewCategory() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewCategoryList = findViewById(R.id.view1);
         recyclerViewCategoryList.setLayoutManager(linearLayoutManager);
 
         ArrayList<CategoryDomain> categoryList = new ArrayList<>();
-        categoryList.add(new CategoryDomain("New","cat_1"));
-        categoryList.add(new CategoryDomain("DELIGHT","cat_1"));
-        categoryList.add(new CategoryDomain("Classic","cat_1"));
-        categoryList.add(new CategoryDomain("Signature","cat_1"));
-        categoryList.add(new CategoryDomain("Favourites","cat_1"));
-        categoryList.add(new CategoryDomain("Supreme","cat_1"));
-
+        categoryList.add(new CategoryDomain("New", "cat_1"));
+        categoryList.add(new CategoryDomain("DELIGHT", "cat_1"));
+        categoryList.add(new CategoryDomain("Classic", "cat_1"));
+        categoryList.add(new CategoryDomain("Signature", "cat_1"));
+        categoryList.add(new CategoryDomain("Favourites", "cat_1"));
+        categoryList.add(new CategoryDomain("Supreme", "cat_1"));
 
         adapter = new CategoryAdapter(categoryList);
         adapter.setOnCategoryClickListener(this); // Set the click listener
         recyclerViewCategoryList.setAdapter(adapter);
-
     }
-
 
     @Override
     public void onCategoryClick(String categoryName) {
@@ -306,27 +241,82 @@ public class HomeActivity extends AppCompatActivity implements CategoryAdapter.O
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
+    // Load recommended pizzas from Firebase
+    private void loadRecommendedPizzas() {
+        pizzasRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                List<PizzaDomain> allPizzas = new ArrayList<>();
 
-    private void recyclerViewPopuler()
-    {
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false);
+                for (DataSnapshot pizzaSnapshot : snapshot.getChildren()) {
+                    PizzaDomain pizza = pizzaSnapshot.getValue(PizzaDomain.class);
+                    if (pizza != null) {
+                        allPizzas.add(pizza);
+                    }
+                }
+
+                // Select 3 random pizzas for recommendations
+                List<PizzaDomain> recommendedPizzas = getRandomPizzas(allPizzas, 3);
+
+                // Initialize the recommended RecyclerView
+                initializeRecommendedRecyclerView(recommendedPizzas);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Failed to load pizzas: " + error.getMessage());
+                // Fallback to hardcoded pizzas if Firebase fails
+                recyclerViewPopulerFallback();
+            }
+        });
+    }
+
+    private List<PizzaDomain> getRandomPizzas(List<PizzaDomain> allPizzas, int count) {
+        if (allPizzas.size() <= count) {
+            return allPizzas;
+        }
+
+        List<PizzaDomain> randomPizzas = new ArrayList<>();
+        List<PizzaDomain> tempList = new ArrayList<>(allPizzas);
+        Collections.shuffle(tempList, new Random());
+
+        for (int i = 0; i < count; i++) {
+            randomPizzas.add(tempList.get(i));
+        }
+
+        return randomPizzas;
+    }
+
+    private void initializeRecommendedRecyclerView(List<PizzaDomain> pizzaList) {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewRecommendedList = findViewById(R.id.view2);
         recyclerViewRecommendedList.setLayoutManager(linearLayoutManager);
 
-        ArrayList<PizzaDomain> pizzaList = new ArrayList<>();
-        pizzaList.add(new PizzaDomain("Margherita","pizza_recommended01","A hugely popular margherita, with a deliciously tangy single cheese topping",3200.00,4.5,20,"Classic"));
-        pizzaList.add(new PizzaDomain("Pepperoni Pizza","pizza_recommended02","A hugely popular margherita, with a deliciously tangy single cheese topping",3800.00,4.8,18,"Classic"));
-        pizzaList.add(new PizzaDomain("Cheese Pizza","pizza_recommended03","A hugely popular margherita, with a deliciously tangy single cheese topping",3600.00,4.2,16,"Favorite"));
-
-
         adapter2 = new RecommendedAdapter(pizzaList);
+        adapter2.setOnItemClickListener(this); // Set the click listener
         recyclerViewRecommendedList.setAdapter(adapter2);
-
     }
 
+    private void recyclerViewPopulerFallback() {
+        // Fallback to hardcoded pizzas if Firebase fails
+        ArrayList<PizzaDomain> pizzaList = new ArrayList<>();
+        pizzaList.add(new PizzaDomain("Margherita", "https://i.postimg.cc/bDn9p2Lp/DELIGHT1.png", "Rich tomato sauce base topped with cream cheese, tomato, mozzarella & basil leaves", 2980.00, 4.8, 20, "delight",1));
+        pizzaList.add(new PizzaDomain("Chilli Chicken Pizza", "https://i.postimg.cc/V0cB6LHM/DELIGHT2.png", "A pizza topped with Spicy Chicken, Green Chillies, Onions & Mozzarella", 2900.00, 4.4, 20, "delight",1));
+        pizzaList.add(new PizzaDomain("Sausage Delight", "https://i.postimg.cc/yJtyMTmL/DELIGHT3.png", "Chicken sausages & onions with a double layer of cheese.", 2950.00, 4.8, 20, "delight",1));
 
+        initializeRecommendedRecyclerView(pizzaList);
+    }
 
+    // Implement the OnItemClickListener interface
+    @Override
+    public void onItemClick(PizzaDomain pizza) {
+        // Open pizza details activity
+        Intent intent = new Intent(HomeActivity.this, PizzaDetailActivity.class);
+        intent.putExtra("pizza", pizza);
+        startActivity(intent);
 
-
-
+        // Optional: Add animation
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+    }
 }
+

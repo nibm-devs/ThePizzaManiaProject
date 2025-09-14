@@ -1,6 +1,7 @@
 package com.example.thepizzamaniaproject.Domain;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class PizzaDomain implements Serializable {
 
@@ -12,6 +13,7 @@ public class PizzaDomain implements Serializable {
     private int time;
     private String category;
 
+    private int quantity;
 
     public PizzaDomain()
     {
@@ -20,7 +22,19 @@ public class PizzaDomain implements Serializable {
 
 
     // Constructor
-    public PizzaDomain(String title, String picture, String description, Double price, Double star, int time, String category) {
+//    public PizzaDomain(String title, String picture, String description, Double price, Double star, int time, String category) {
+//        this.title = title;
+//        this.picture = picture;
+//        this.description = description;
+//        this.price = price;
+//        this.star = star;
+//        this.time = time;
+//        this.category = category;
+//    }
+
+
+    // Constructor
+    public PizzaDomain(String title, String picture, String description, Double price, Double star, int time, String category, int quantity) {
         this.title = title;
         this.picture = picture;
         this.description = description;
@@ -28,6 +42,7 @@ public class PizzaDomain implements Serializable {
         this.star = star;
         this.time = time;
         this.category = category;
+        this.quantity = quantity;
     }
 
 
@@ -60,6 +75,11 @@ public class PizzaDomain implements Serializable {
         return category;
     }
 
+
+    public int getQuantity() {
+        return quantity;
+    }
+
     // Setters
     public void setTitle(String title) {
         this.title = title;
@@ -88,4 +108,22 @@ public class PizzaDomain implements Serializable {
     public void setCategory(String category) {
         this.category = category;
     }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PizzaDomain that = (PizzaDomain) o;
+        return Objects.equals(title, that.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title);
+    }
+
 }
