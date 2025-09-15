@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,6 +25,7 @@ public class CartActivity extends AppCompatActivity {
     private TextView itemsTotalTextView, taxTextView, deliveryTextView, totalTextView;
     private RecyclerView recyclerView;
     private CartAdapter cartAdapter;
+    private double itemsTotalValue, taxValue, deliveryValue, totalValue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -128,6 +130,26 @@ public class CartActivity extends AppCompatActivity {
         });
 
 
+        findViewById(R.id.btn_checkout).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Check if cart is empty
+                if (CartManager.getInstance().getCartItems().isEmpty()) {
+                    Toast.makeText(CartActivity.this, "Your cart is empty", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                // Pass cart data to OrderActivity
+                Intent intent = new Intent(CartActivity.this, OrderActivity.class);
+                intent.putExtra("itemsTotal", itemsTotalValue);
+                intent.putExtra("tax", taxValue);
+                intent.putExtra("delivery", deliveryValue);
+                intent.putExtra("total", totalValue);
+                startActivity(intent);
+            }
+        });
+
+
     }
 
 
@@ -149,6 +171,12 @@ public class CartActivity extends AppCompatActivity {
         double tax = itemsTotal * 0.1; // 10% tax
         double delivery = itemsTotal > 0 ? 350 : 0; // Rs.350 delivery charge if items exist
         double total = itemsTotal + tax + delivery;
+
+        // Store values
+        itemsTotalValue = itemsTotal;
+        taxValue = tax;
+        deliveryValue = delivery;
+        totalValue = total;
 
         itemsTotalTextView.setText("Rs." + String.format("%.2f", itemsTotal));
         taxTextView.setText("Rs." + String.format("%.2f", tax));
