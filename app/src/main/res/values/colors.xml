@@ -11,6 +11,8 @@
 
 
     <!-- Accent Colors -->
+    <color name="green">#4CAF50</color>
+    <color name="star_yellow">#FFD700</color>
     <color name="accent">#FF4081</color>
     <color name="accent_color">#FF9800</color>
     <color name="accent_dark_secondary">#F57C00</color>
