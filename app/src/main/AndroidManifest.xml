@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- To get the internet permission -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" /> <!-- To get the network state permission -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- To get permission to image picking -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

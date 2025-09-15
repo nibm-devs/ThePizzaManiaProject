@@ -18,6 +18,7 @@ databindingCommon = "8.13.0"
 databindingRuntime = "8.13.0"
 googleGmsGoogleServices = "4.4.3"
 playServicesMaps = "19.2.0"
+playServicesLocation = "21.3.0"
 
 [libraries]
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -37,6 +38,7 @@ play-services-cast-framework = { group = "com.google.android.gms", name = "play-
 databinding-common = { group = "androidx.databinding", name = "databinding-common", version.ref = "databindingCommon" }
 databinding-runtime = { group = "androidx.databinding", name = "databinding-runtime", version.ref = "databindingRuntime" }
 play-services-maps = { group = "com.google.android.gms", name = "play-services-maps", version.ref = "playServicesMaps" }
+play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
