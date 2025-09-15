@@ -60,13 +60,8 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     implementation("com.google.code.gson:gson:2.10.1")
 
-    // fire base
+    // In your app-level build.gradle
     implementation("com.google.firebase:firebase-database:20.2.2")
 
-    implementation("com.google.android.gms:play-services-location:18.0.0")
-    implementation("com.google.android.gms:play-services-maps:17.0.1")
-
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
-
-    implementation("com.google.android.material:material:1.6.0")
 }

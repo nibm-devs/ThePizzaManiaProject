@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:background="#001F54">
+
+    <!-- Title -->
+    <TextView
+        android:id="@+id/tvSettingsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:layout_gravity="center_horizontal"
+        android:paddingBottom="24dp" />
+
+    <!-- Change Profile Row -->
+    <LinearLayout
+        android:id="@+id/rowChangeProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="16dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Change Profile"
+            android:textSize="18sp"
+            android:textColor="@android:color/white" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_forward" />
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+    <!-- Change Password Row -->
+    <LinearLayout
+        android:id="@+id/rowChangePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingVertical="16dp"
+        android:background="?android:attr/selectableItemBackground">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Change Password"
+            android:textSize="18sp"
+            android:textColor="@android:color/white" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow_forward" />
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray" />
+
+</LinearLayout>
