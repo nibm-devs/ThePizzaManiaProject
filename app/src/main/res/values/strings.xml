@@ -3,6 +3,7 @@
     <string name="menu_item_image">Menu item image</string>
     <string name="edit_item">Edit item</string>
     <string name="delete_item">Delete item</string>
+    <string name="pizza_image">Pizza Image</string>
 
     <string-array name="categories_array">
         <item>Pizza</item>
@@ -27,4 +28,13 @@
     <string name="your_earning">Your Earning</string>
     <string name="earning_amount_placeholder">$5.50</string>
     <string name="calendar_icon_desc">Calendar icon</string>
+    <string name="title">Title</string>
+    <string name="price">$0</string>
+    <string name="star">4.8</string>
+    <string name="time">20 min</string>
+    <string name="description">Description</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="price_format">$%.2f</string>
+    <string name="star_format">%.1f</string>
+    <string name="time_format">%d min</string>
 </resources>
