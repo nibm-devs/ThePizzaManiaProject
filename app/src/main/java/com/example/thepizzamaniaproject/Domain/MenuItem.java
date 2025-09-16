@@ -1,76 +1,58 @@
 package com.example.thepizzamaniaproject.Domain;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 
-public class MenuItem implements Parcelable {
+
+public class MenuItem {
     private String id;
-    private String name;
+    private String title;
     private String description;
     private double price;
+    private String picture;
     private String category;
-    private String imageUrl;
+    private double star;
+    private int time;
+    private boolean available;
 
-    public MenuItem() {
-        // Required for Firebase
-    }
+    public MenuItem() {}
 
-    public MenuItem(String id, String name, String description, double price, String category, String imageUrl) {
+    public MenuItem(String id, String title, String description, double price,
+                    String picture, String category, double star, int time, boolean available) {
         this.id = id;
-        this.name = name;
+        this.title = title;
         this.description = description;
         this.price = price;
+        this.picture = picture;
         this.category = category;
-        this.imageUrl = imageUrl;
+        this.star = star;
+        this.time = time;
+        this.available = available;
     }
 
-    protected MenuItem(Parcel in) {
-        id = in.readString();
-        name = in.readString();
-        description = in.readString();
-        price = in.readDouble();
-        category = in.readString();
-        imageUrl = in.readString();
-    }
-
-    public static final Creator<MenuItem> CREATOR = new Creator<MenuItem>() {
-        @Override
-        public MenuItem createFromParcel(Parcel in) {
-            return new MenuItem(in);
-        }
-
-        @Override
-        public MenuItem[] newArray(int size) {
-            return new MenuItem[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
-        dest.writeString(name);
-        dest.writeString(description);
-        dest.writeDouble(price);
-        dest.writeString(category);
-        dest.writeString(imageUrl);
-    }
-
-    // Getters and Setters
+    // Getters and setters
     public String getId() { return id; }
     public void setId(String id) { this.id = id; }
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
     public double getPrice() { return price; }
     public void setPrice(double price) { this.price = price; }
+
+    public String getPicture() { return picture; }
+    public void setPicture(String picture) { this.picture = picture; }
+
     public String getCategory() { return category; }
     public void setCategory(String category) { this.category = category; }
-    public String getImageUrl() { return imageUrl; }
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    public double getStar() { return star; }
+    public void setStar(double star) { this.star = star; }
+
+    public int getTime() { return time; }
+    public void setTime(int time) { this.time = time; }
+
+    public boolean isAvailable() { return available; }
+    public void setAvailable(boolean available) { this.available = available; }
 }

@@ -1,136 +1,93 @@
 package com.example.thepizzamaniaproject.Activity;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.thepizzamaniaproject.Domain.MenuItem;
 import com.example.thepizzamaniaproject.R;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-import java.util.UUID;
+import java.util.HashMap;
 
 public class AddEditMenuItemActivity extends AppCompatActivity {
 
-    private static final int PICK_IMAGE_REQUEST = 1;
-    private Uri imageUri;
-    private MenuItem menuItem;
-    private boolean isEditMode = false;
-
-    // View references
-    private EditText etName, etDescription, etPrice;
+    private EditText etPizzaId, etName, etDescription, etPrice, etPictureUrl;
     private AutoCompleteTextView autoCompleteCategory;
     private Button btnSave;
-    private FrameLayout btnSelectImage;
     private ImageButton btnBack;
-    private ImageView ivPreview;
 
-    private FirebaseFirestore db;
-    private StorageReference storageReference;
+    private DatabaseReference dbRef;
     private ProgressDialog progressDialog;
 
-    @SuppressLint("MissingInflatedId")
+    private boolean isEditMode = false;
+    private String existingPizzaId = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_edit_menu_item);
 
-        // Initialize Firebase
-        db = FirebaseFirestore.getInstance();
-        storageReference = FirebaseStorage.getInstance().getReference("menu_images");
+        // Firebase DB reference
+        dbRef = FirebaseDatabase.getInstance().getReference("pizzas");
 
-        // Initialize views using findViewById
+        // Init views
+        etPizzaId = findViewById(R.id.etPizzaId);
         etName = findViewById(R.id.etName);
         etDescription = findViewById(R.id.etDescription);
         etPrice = findViewById(R.id.etPrice);
+        etPictureUrl = findViewById(R.id.etPictureUrl);
         autoCompleteCategory = findViewById(R.id.autoComplete);
         btnSave = findViewById(R.id.btnSave);
-        btnSelectImage = findViewById(R.id.btnSelectImage);
         btnBack = findViewById(R.id.btnBack);
-        ivPreview = findViewById(R.id.ivPreview);
 
-        // Setup progress dialog
+        // Progress dialog
         progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Please wait...");
+        progressDialog.setMessage("Saving...");
         progressDialog.setCancelable(false);
 
-        // Setup category AutoCompleteTextView
+        // Category dropdown setup
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.categories_array, android.R.layout.simple_dropdown_item_1line);
         autoCompleteCategory.setAdapter(adapter);
 
-        // Set click listeners
+        // Back button
         btnBack.setOnClickListener(v -> onBackPressed());
-        btnSelectImage.setOnClickListener(v -> openImageChooser());
+
+        // Save button
         btnSave.setOnClickListener(v -> saveMenuItem());
 
-        // Check if we're editing an existing item
-        if (getIntent().hasExtra("menuItem")) {
+        // If editing
+        if (getIntent().hasExtra("pizzaId")) {
             isEditMode = true;
-            menuItem = getIntent().getParcelableExtra("menuItem");
-            populateFields();
-        } else {
-            menuItem = new MenuItem();
+            existingPizzaId = getIntent().getStringExtra("pizzaId");
+            loadExistingData();
         }
     }
 
-    private void openImageChooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            imageUri = data.getData();
-            ivPreview.setImageURI(imageUri);
-            ivPreview.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void populateFields() {
-        if (menuItem != null) {
-            etName.setText(menuItem.getName());
-            etDescription.setText(menuItem.getDescription());
-            etPrice.setText(String.valueOf(menuItem.getPrice()));
-
-            // Set category in AutoCompleteTextView
-            autoCompleteCategory.setText(menuItem.getCategory());
-
-            // Show existing image if available
-            if (menuItem.getImageUrl() != null && !menuItem.getImageUrl().isEmpty()) {
-                ivPreview.setVisibility(View.VISIBLE);
-            }
-        }
+    private void loadExistingData() {
+        // TODO: If you pass existing pizza data via Intent, populate here
+        etPizzaId.setText(existingPizzaId);
+        etPizzaId.setEnabled(false); // Don't allow editing ID in edit mode
     }
 
     private void saveMenuItem() {
+        String pizzaId = etPizzaId.getText().toString().trim();
         String name = etName.getText().toString().trim();
         String description = etDescription.getText().toString().trim();
         String priceStr = etPrice.getText().toString().trim();
+        String pictureUrl = etPictureUrl.getText().toString().trim();
         String category = autoCompleteCategory.getText().toString().trim();
 
-        if (name.isEmpty() || description.isEmpty() || priceStr.isEmpty() || category.isEmpty()) {
+        if (pizzaId.isEmpty() || name.isEmpty() || description.isEmpty() ||
+                priceStr.isEmpty() || pictureUrl.isEmpty() || category.isEmpty()) {
             Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -139,69 +96,31 @@ public class AddEditMenuItemActivity extends AppCompatActivity {
         try {
             price = Double.parseDouble(priceStr);
         } catch (NumberFormatException e) {
-            Toast.makeText(this, "Please enter a valid price", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Enter valid price", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        menuItem.setName(name);
-        menuItem.setDescription(description);
-        menuItem.setPrice(price);
-        menuItem.setCategory(category);
-
-        if (imageUri != null) {
-            uploadImageAndSaveItem();
-        } else if (isEditMode && menuItem.getImageUrl() != null && !menuItem.getImageUrl().isEmpty()) {
-            saveMenuItemToFirebase(menuItem.getImageUrl());
-        } else {
-            Toast.makeText(this, "Please select an image", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void uploadImageAndSaveItem() {
         progressDialog.show();
-        final String imageName = UUID.randomUUID().toString() + ".jpg";
-        StorageReference imageRef = storageReference.child(imageName);
 
-        imageRef.putFile(imageUri)
-                .addOnSuccessListener(taskSnapshot -> {
-                    imageRef.getDownloadUrl().addOnSuccessListener(uri -> {
-                        String imageUrl = uri.toString();
-                        saveMenuItemToFirebase(imageUrl);
-                    });
-                })
-                .addOnFailureListener(e -> {
-                    progressDialog.dismiss();
-                    Toast.makeText(AddEditMenuItemActivity.this, "Image upload failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
+        // Build object
+        HashMap<String, Object> pizza = new HashMap<>();
+        pizza.put("title", name);
+        pizza.put("description", description);
+        pizza.put("price", price);
+        pizza.put("category", category);
+        pizza.put("picture", pictureUrl);
+        pizza.put("star", 0);
+        pizza.put("time", 0);
 
-    private void saveMenuItemToFirebase(String imageUrl) {
-        menuItem.setImageUrl(imageUrl);
-
-        if (isEditMode) {
-            db.collection("menuItems").document(menuItem.getId())
-                    .set(menuItem)
-                    .addOnSuccessListener(aVoid -> {
-                        progressDialog.dismiss();
-                        Toast.makeText(this, "Menu item updated successfully", Toast.LENGTH_SHORT).show();
-                        finish();
-                    })
-                    .addOnFailureListener(e -> {
-                        progressDialog.dismiss();
-                        Toast.makeText(this, "Error updating item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
-        } else {
-            db.collection("menuItems")
-                    .add(menuItem)
-                    .addOnSuccessListener(documentReference -> {
-                        progressDialog.dismiss();
-                        Toast.makeText(this, "Menu item added successfully", Toast.LENGTH_SHORT).show();
-                        finish();
-                    })
-                    .addOnFailureListener(e -> {
-                        progressDialog.dismiss();
-                        Toast.makeText(this, "Error adding item: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
-        }
+        // Save to DB
+        dbRef.child(pizzaId).setValue(pizza).addOnCompleteListener(task -> {
+            progressDialog.dismiss();
+            if (task.isSuccessful()) {
+                Toast.makeText(this, isEditMode ? "Pizza updated!" : "Pizza added!", Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
