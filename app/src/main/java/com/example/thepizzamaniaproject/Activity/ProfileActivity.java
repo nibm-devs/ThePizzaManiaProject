@@ -292,19 +292,16 @@ public class ProfileActivity extends AppCompatActivity {
         dialog.show();
 
         // Camera option
-        dialogView.findViewById(R.id.cameraOption).setOnClickListener(v -> {
+        dialogView.findViewById(R.id.cameraButton).setOnClickListener(v -> {
             dialog.dismiss();
             checkCameraPermission();
         });
 
         // Gallery option
-        dialogView.findViewById(R.id.galleryOption).setOnClickListener(v -> {
+        dialogView.findViewById(R.id.galleryButton).setOnClickListener(v -> {
             dialog.dismiss();
             openImagePicker();
         });
-
-        // Cancel button
-        dialogView.findViewById(R.id.cancelButton).setOnClickListener(v -> dialog.dismiss());
     }
 
 

@@ -19,6 +19,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:layout_marginTop="20sp"
         android:padding="25dp"
         android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="parent"
@@ -33,6 +34,7 @@
             android:contentDescription="Menu icon" />
 
         <TextView
+            android:id="@+id/greetingTextView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -50,7 +52,7 @@
             app:cardElevation="8dp"
             android:backgroundTint="#FFFFFF">
 
-            <Switch
+            <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/toggleStatus"
                 android:layout_width="55dp"
                 android:layout_height="32dp"
@@ -96,7 +98,7 @@
                 android:id="@+id/riderName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Camden Bacon"
+                android:text=""
                 android:textSize="22sp"
                 android:textStyle="bold"
                 android:textColor="#222"
@@ -326,12 +328,15 @@
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="280dp"
+    <!-- Custom Navigation Drawer -->
+    <RelativeLayout
+        android:id="@+id/nav_view_container"
+        android:layout_width="300dp"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="#fff"
-        app:headerLayout="@layout/rider_nav_header"
-        app:menu="@menu/drawer_menu"/>
-    </androidx.drawerlayout.widget.DrawerLayout>
+        android:layout_gravity="start">
+
+        <include layout="@layout/custom_nav_drawer" />
+
+    </RelativeLayout>
+
+</androidx.drawerlayout.widget.DrawerLayout>

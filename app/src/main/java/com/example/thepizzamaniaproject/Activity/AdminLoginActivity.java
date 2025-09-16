@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -20,14 +21,23 @@ import com.example.thepizzamaniaproject.R;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class AdminLoginActivity extends AppCompatActivity {
 
-    private TextInputEditText editTextUsername, editTextPassword;
-    private TextInputLayout usernameLayout, passwordLayout;
+    private TextInputEditText editTextEmail, editTextPassword;
+    private TextInputLayout emailLayout, passwordLayout;
     private MaterialButton buttonLogin;
     private CardView cardView;
     private ProgressBar progressBar;
+    private FirebaseAuth mAuth;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +49,9 @@ public class AdminLoginActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         );
+
+        mAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
 
         initializeViews();
         setupAnimations();
@@ -56,9 +69,9 @@ public class AdminLoginActivity extends AppCompatActivity {
     }
 
     private void initializeViews() {
-        editTextUsername = findViewById(R.id.editTextUsername);
+        editTextEmail = findViewById(R.id.editTextUsername);
         editTextPassword = findViewById(R.id.editTextPassword);
-        usernameLayout = findViewById(R.id.usernameLayout);
+        emailLayout = findViewById(R.id.usernameLayout);
         passwordLayout = findViewById(R.id.passwordLayout);
         buttonLogin = findViewById(R.id.buttonLogin);
         cardView = findViewById(R.id.cardView);
@@ -71,13 +84,13 @@ public class AdminLoginActivity extends AppCompatActivity {
     }
 
     private void setupTextWatchers() {
-        editTextUsername.addTextChangedListener(new TextWatcher() {
+        editTextEmail.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                usernameLayout.setError(null);
+                emailLayout.setError(null);
             }
 
             @Override
@@ -108,14 +121,19 @@ public class AdminLoginActivity extends AppCompatActivity {
         findViewById(R.id.textViewForgotPassword).setOnClickListener(v -> {
             Toast.makeText(this, "Password reset feature coming soon!", Toast.LENGTH_SHORT).show();
         });
+
+        findViewById(R.id.DeliveryRegister).setOnClickListener(v -> {
+            Intent intent = new Intent(AdminLoginActivity.this, RiderRegistrationActivity.class);
+            startActivity(intent);
+        });
     }
 
     private boolean validateInputs() {
-        String username = editTextUsername.getText().toString().trim();
+        String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
-        if (username.isEmpty()) {
-            usernameLayout.setError("Admin ID is required");
+        if (email.isEmpty()) {
+            emailLayout.setError("Email is required");
             return false;
         }
 
@@ -133,28 +151,84 @@ public class AdminLoginActivity extends AppCompatActivity {
     }
 
     private void attemptLogin() {
-        String username = editTextUsername.getText().toString().trim();
+        String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
 
         progressBar.setVisibility(View.VISIBLE);
         buttonLogin.setEnabled(false);
 
-        new Handler().postDelayed(() -> {
-            progressBar.setVisibility(View.GONE);
-            buttonLogin.setEnabled(true);
-
-            if (username.equals("admin") && password.equals("admin123")) {
-                loginSuccess();
-            } else {
-                loginFailed();
-            }
-        }, 2000);
+        mAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            checkUserRole(user.getUid());
+                        }
+                    } else {
+                        progressBar.setVisibility(View.GONE);
+                        buttonLogin.setEnabled(true);
+                        String errorMessage = "Authentication failed.";
+                        if (task.getException() != null) {
+                            errorMessage = task.getException().getMessage();
+                        }
+                        Toast.makeText(AdminLoginActivity.this, "Error: " + errorMessage,
+                                Toast.LENGTH_LONG).show();
+                        loginFailed();
+                    }
+                });
     }
 
-    private void loginSuccess() {
+    private void checkUserRole(String uid) {
+        databaseReference.child("admins").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // User is an admin
+                    loginSuccess(AdminPanelActivity.class);
+                } else {
+                    // Check if user is a rider
+                    checkIfRider(uid);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                progressBar.setVisibility(View.GONE);
+                buttonLogin.setEnabled(true);
+                Toast.makeText(AdminLoginActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void checkIfRider(String uid) {
+        databaseReference.child("riders").child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    // User is a rider
+                    loginSuccess(RiderHomeActivity.class);
+                } else {
+                    // User role not found
+                    progressBar.setVisibility(View.GONE);
+                    buttonLogin.setEnabled(true);
+                    Toast.makeText(AdminLoginActivity.this, "User role not defined.", Toast.LENGTH_SHORT).show();
+                    mAuth.signOut(); // Sign out user as they have no role
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                progressBar.setVisibility(View.GONE);
+                buttonLogin.setEnabled(true);
+                Toast.makeText(AdminLoginActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void loginSuccess(Class<?> destinationActivity) {
         Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
 
-        Intent intent = new Intent(this, AdminLoginActivity.class);
+        Intent intent = new Intent(this, destinationActivity);
         startActivity(intent);
         finish();
 
@@ -162,7 +236,7 @@ public class AdminLoginActivity extends AppCompatActivity {
     }
 
     private void loginFailed() {
-        Toast.makeText(this, "Invalid admin credentials", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
 
         Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
         cardView.startAnimation(shake);

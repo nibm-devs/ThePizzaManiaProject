@@ -1,49 +1,44 @@
 package com.example.thepizzamaniaproject.Activity;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import com.example.thepizzamaniaproject.R;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
-import com.example.thepizzamaniaproject.Activity.LoginActivity;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.material.imageview.ShapeableImageView;
-import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 import de.hdodenhof.circleimageview.CircleImageView;
+import androidx.appcompat.widget.SwitchCompat;
+
+import java.util.Calendar;
 
 public class RiderHomeActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
-    private NavigationView navView;
     private ShapeableImageView profilePic;
     private TextView riderNameTextView;
-    private Switch toggleStatus;
+    private TextView greetingTextView;
     private LinearLayout jobListingLayout;
     private FirebaseUser currentUser;
     private DatabaseReference riderRef, ordersRef;
     private ValueEventListener ordersListener;
+    private ValueEventListener riderInfoListener;
+    private BroadcastReceiver profileImageReceiver;
 
     // Navigation header views
     private CircleImageView navHeaderImage;
     private TextView navHeaderName, navHeaderEmail;
-    private TextView btnHistory, btnSettings;
-    private Button btnLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,38 +58,46 @@ public class RiderHomeActivity extends AppCompatActivity {
 
 
         drawerLayout = findViewById(R.id.drawerLayout);
-        navView = findViewById(R.id.nav_view);
         profilePic = findViewById(R.id.profilePic);
         riderNameTextView = findViewById(R.id.riderName);
-        toggleStatus = findViewById(R.id.toggleStatus);
+        greetingTextView = findViewById(R.id.greetingTextView);
+        SwitchCompat toggleStatus = findViewById(R.id.toggleStatus);
         jobListingLayout = findViewById(R.id.jobListingLayout);
 
         ImageView menuIcon = findViewById(R.id.menuIcon);
 
-        // Navigation header
-        View headerView = navView.getHeaderView(0);
-        navHeaderImage = headerView.findViewById(R.id.header_image);
-        navHeaderName = headerView.findViewById(R.id.header_name);
-        navHeaderEmail = headerView.findViewById(R.id.header_email);
-        btnHistory = headerView.findViewById(R.id.btn_delivery_history);
-        btnSettings = headerView.findViewById(R.id.btn_delivery_settings);
-        btnLogout = headerView.findViewById(R.id.btn_logout);
+        // Custom Drawer Views
+        View navDrawerView = findViewById(R.id.nav_view_container);
+        navHeaderImage = navDrawerView.findViewById(R.id.header_image);
+        navHeaderName = navDrawerView.findViewById(R.id.header_name);
+        navHeaderEmail = navDrawerView.findViewById(R.id.header_email);
+        TextView navHistory = navDrawerView.findViewById(R.id.nav_history);
+        TextView navSettings = navDrawerView.findViewById(R.id.nav_settings);
+        Button logoutButton = navDrawerView.findViewById(R.id.nav_logout_button);
 
-        // Show rider info
-        displayRiderInfo(uid);
+        // Set greeting based on time of day
+        setGreeting();
 
-        // Show navigation header info
-        displayNavHeaderInfo();
+        // Setup Real-time Rider Info Listener
+        setupRiderInfoListener();
 
         // Menu icon click opens drawer
         menuIcon.setOnClickListener(v -> drawerLayout.openDrawer(GravityCompat.START));
 
-        // Navigation drawer actions
-        btnHistory.setOnClickListener(v -> startActivity(new Intent(this, RiderDeliveryHistoryActivity.class)));
-        btnSettings.setOnClickListener(v -> startActivity(new Intent(this, RiderSettingsActivity.class)));
-        btnLogout.setOnClickListener(v -> {
+        // Custom Drawer Item Clicks
+        navHistory.setOnClickListener(v -> {
+            startActivity(new Intent(this, RiderDeliveryHistoryActivity.class));
+            drawerLayout.closeDrawer(GravityCompat.START);
+        });
+
+        navSettings.setOnClickListener(v -> {
+            startActivity(new Intent(this, RiderSettingsActivity.class));
+            drawerLayout.closeDrawer(GravityCompat.START);
+        });
+
+        logoutButton.setOnClickListener(v -> {
             FirebaseAuth.getInstance().signOut();
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivity(new Intent(this, AdminLoginActivity.class));
             finish();
         });
 
@@ -117,92 +120,149 @@ public class RiderHomeActivity extends AppCompatActivity {
 
         // Orders: only show if at least one order exists
         setupOrderListener();
-
-        // (Optional) Drawer menu item clicks (if you have more items)
-        navView.setNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_logout) {
-                btnLogout.performClick();
-                return true;
-            }
-            // Add more menu item actions as needed
-            return false;
-        });
+        setupProfileImageReceiver();
     }
 
-    private void displayRiderInfo(String uid) {
-        // Get profile name and image from DB, update views
-        riderRef.addValueEventListener(new ValueEventListener() {
+    private void setupProfileImageReceiver() {
+        profileImageReceiver = new BroadcastReceiver() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String name = snapshot.child("name").getValue(String.class);
-                String profileUrl = snapshot.child("profileImageUrl").getValue(String.class);
-
-                riderNameTextView.setText(name != null ? name : "Rider");
-                // If image URL is set, load it; else set blank/placeholder
-                if (profileUrl != null && !profileUrl.isEmpty()) {
+            public void onReceive(Context context, Intent intent) {
+                String imageUrl = intent.getStringExtra("profileImageUrl");
+                if (imageUrl != null && !imageUrl.isEmpty()) {
                     Glide.with(RiderHomeActivity.this)
-                            .load(profileUrl)
+                            .load(imageUrl)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
                             .placeholder(R.drawable.rider_profile)
+                            .error(R.drawable.rider_profile)
                             .into(profilePic);
-                } else {
-                    profilePic.setImageResource(R.drawable.rider_profile); // default/empty image
+                    Glide.with(RiderHomeActivity.this)
+                            .load(imageUrl)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .placeholder(R.drawable.rider_profile)
+                            .error(R.drawable.rider_profile)
+                            .into(navHeaderImage);
                 }
             }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
-        });
+        };
     }
 
-    private void displayNavHeaderInfo() {
-        // Set name, email and profile image in nav header
+    private void setGreeting() {
+        Calendar calendar = Calendar.getInstance();
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+
+        String greeting;
+        if (hour >= 5 && hour < 12) {
+            greeting = "Good Morning!";
+        } else if (hour >= 12 && hour < 18) {
+            greeting = "Good Afternoon!";
+        } else if (hour >= 18 && hour < 22) {
+            greeting = "Good Evening!";
+        } else {
+            greeting = "Good Night!";
+        }
+        greetingTextView.setText(greeting);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        // Add the listener in onStart
+        if (riderInfoListener != null && riderRef != null) {
+            riderRef.addValueEventListener(riderInfoListener);
+        }
+        registerReceiver(profileImageReceiver, new IntentFilter("com.example.thepizzamaniaproject.UPDATE_PROFILE_IMAGE"), RECEIVER_NOT_EXPORTED);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Remove the listener in onStop
+        if (riderInfoListener != null && riderRef != null) {
+            riderRef.removeEventListener(riderInfoListener);
+        }
+        unregisterReceiver(profileImageReceiver);
+    }
+
+    private void setupRiderInfoListener() {
+        // Set static email
         String email = currentUser.getEmail();
         navHeaderEmail.setText(email != null ? email : "rider@example.com");
-        riderRef.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        riderInfoListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String name = snapshot.child("name").getValue(String.class);
-                navHeaderName.setText(name != null ? name : "Rider");
-                String profileUrl = snapshot.child("profileImageUrl").getValue(String.class);
-                if (profileUrl != null && !profileUrl.isEmpty()) {
-                    Glide.with(RiderHomeActivity.this)
-                            .load(profileUrl)
-                            .placeholder(R.drawable.rider_profile)
-                            .into(navHeaderImage);
-                } else {
-                    navHeaderImage.setImageResource(R.drawable.rider_profile);
+                if (snapshot.exists()) {
+                    String name = snapshot.child("name").getValue(String.class);
+                    String profileUrl = snapshot.child("profileImageUrl").getValue(String.class);
+
+                    // Update main content views
+                    riderNameTextView.setText(name != null ? name : "Rider");
+
+                    // Update nav drawer header views
+                    navHeaderName.setText(name != null ? name : "Rider");
+
+                    // Update both profile images
+                    if (profileUrl != null && !profileUrl.isEmpty()) {
+                        Glide.with(RiderHomeActivity.this)
+                                .load(profileUrl)
+                                .placeholder(R.drawable.rider_profile)
+                                .error(R.drawable.rider_profile)
+                                .into(profilePic);
+                        Glide.with(RiderHomeActivity.this)
+                                .load(profileUrl)
+                                .placeholder(R.drawable.rider_profile)
+                                .error(R.drawable.rider_profile)
+                                .into(navHeaderImage);
+                    } else {
+                        profilePic.setImageResource(R.drawable.rider_profile);
+                        navHeaderImage.setImageResource(R.drawable.rider_profile);
+                    }
                 }
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
-        });
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(RiderHomeActivity.this, "Failed to load user data.", Toast.LENGTH_SHORT).show();
+            }
+        };
     }
 
     private void setupOrderListener() {
         // Show orders section only if there are pending requests for this rider
-        ordersListener = ordersRef.addValueEventListener(new ValueEventListener() {
+        Query riderOrdersQuery = ordersRef.orderByChild("riderId").equalTo(currentUser.getUid());
+        ordersListener = riderOrdersQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                jobListingLayout.setVisibility(View.GONE);
-                for (DataSnapshot orderSnap : snapshot.getChildren()) {
-                    String riderId = orderSnap.child("riderId").getValue(String.class);
-                    String status = orderSnap.child("status").getValue(String.class);
-                    // Show if the order is assigned to this rider, and is not completed/cancelled
-                    if (currentUser.getUid().equals(riderId)
-                            && status != null && status.equals("requested")) {
-                        jobListingLayout.setVisibility(View.VISIBLE);
-                        break;
+                boolean hasPendingOrders = false;
+                if (snapshot.exists()) {
+                    for (DataSnapshot orderSnap : snapshot.getChildren()) {
+                        String status = orderSnap.child("status").getValue(String.class);
+                        if (status != null && status.equals("requested")) {
+                            hasPendingOrders = true;
+                            break;
+                        }
                     }
                 }
+                jobListingLayout.setVisibility(hasPendingOrders ? View.VISIBLE : View.GONE);
             }
             @Override
-            public void onCancelled(@NonNull DatabaseError error) { }
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle potential errors
+            }
         });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (ordersRef != null && ordersListener != null)
+        if (ordersRef != null && ordersListener != null) {
             ordersRef.removeEventListener(ordersListener);
+        }
+        // No need to remove riderInfoListener here as it's handled in onStop
+        if (profileImageReceiver != null) {
+            unregisterReceiver(profileImageReceiver);
+        }
     }
 }

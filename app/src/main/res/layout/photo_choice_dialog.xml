@@ -2,80 +2,27 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@drawable/dialog_background">
+    android:padding="16dp">
 
-    <!-- Title -->
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Choose Profile Picture"
+        android:text="Choose an option"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="16dp"
-        android:textColor="#000000"/>
+        android:layout_marginBottom="16dp"/>
 
-    <!-- Camera Option -->
-    <LinearLayout
-        android:id="@+id/cameraOption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="?android:attr/selectableItemBackground">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_camera"
-            app:tint="#FF5722"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Take Photo"
-            android:textSize="16sp"
-            android:layout_marginStart="16dp"
-            android:textColor="#000000"/>
-
-    </LinearLayout>
-
-    <!-- Gallery Option -->
-    <LinearLayout
-        android:id="@+id/galleryOption"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="?android:attr/selectableItemBackground">
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_gallery"
-            app:tint="#FF5722"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Choose from Gallery"
-            android:textSize="16sp"
-            android:layout_marginStart="16dp"
-            android:textColor="#000000"/>
-
-    </LinearLayout>
-
-    <!-- Cancel Button -->
     <Button
-        android:id="@+id/cancelButton"
+        android:id="@+id/cameraButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:layout_marginTop="8dp"
-        android:backgroundTint="#9E9E9E"
-        android:textColor="#FFFFFF"/>
+        android:text="Take Photo" />
+
+    <Button
+        android:id="@+id/galleryButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Choose from Gallery" />
 
 </LinearLayout>
