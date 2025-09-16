@@ -23,6 +23,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.*;
 import de.hdodenhof.circleimageview.CircleImageView;
 import androidx.appcompat.widget.SwitchCompat;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import android.location.Location;
+import androidx.core.app.ActivityCompat;
+import android.content.pm.PackageManager;
 
 import java.util.Calendar;
 
@@ -38,6 +43,7 @@ public class RiderHomeActivity extends AppCompatActivity {
     private ValueEventListener ordersListener;
     private ValueEventListener riderInfoListener;
     private BroadcastReceiver profileImageReceiver;
+    private FusedLocationProviderClient fusedLocationClient;
 
     // Navigation header views
     private CircleImageView navHeaderImage;
@@ -51,7 +57,7 @@ public class RiderHomeActivity extends AppCompatActivity {
         // Firebase references
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            startActivity(new Intent(this, RiderRegistrationActivity.class));
+            startActivity(new Intent(this, AdminLoginActivity.class));
             finish();
             return;
         }
@@ -124,6 +130,7 @@ public class RiderHomeActivity extends AppCompatActivity {
         // Orders: only show if at least one order exists
         setupOrderListener();
         setupProfileImageReceiver();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
     private void setupProfileImageReceiver() {
@@ -233,18 +240,19 @@ public class RiderHomeActivity extends AppCompatActivity {
     }
 
     private void setupOrderListener() {
-        // Show orders section only if there are pending requests for this rider
-        Query riderOrdersQuery = ordersRef.orderByChild("riderId").equalTo(currentUser.getUid());
-        ordersListener = riderOrdersQuery.addValueEventListener(new ValueEventListener() {
+        // Show all orders with status 'requested' (not just assigned to this rider)
+        Query requestedOrdersQuery = ordersRef.orderByChild("status").equalTo("requested");
+        ordersListener = requestedOrdersQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 jobListingLayout.removeAllViews(); // Clear previous views
-                boolean hasPendingOrders = false;
+                boolean hasRequestedOrders = false;
                 if (snapshot.exists()) {
                     for (DataSnapshot orderSnap : snapshot.getChildren()) {
-                        String status = orderSnap.child("status").getValue(String.class);
-                        if (status != null && status.equals("requested")) {
-                            hasPendingOrders = true;
+                        // Only show orders that are not assigned to any rider
+                        String riderId = orderSnap.child("riderId").getValue(String.class);
+                        if (riderId == null || riderId.isEmpty()) {
+                            hasRequestedOrders = true;
 
                             // Inflate the new order card layout
                             View orderCard = getLayoutInflater().inflate(R.layout.order_card, jobListingLayout, false);
@@ -254,14 +262,25 @@ public class RiderHomeActivity extends AppCompatActivity {
                             TextView customerName = orderCard.findViewById(R.id.customerName);
                             TextView deliveryAddress = orderCard.findViewById(R.id.deliveryAddress);
                             ImageButton callButton = orderCard.findViewById(R.id.phone);
+                            ImageButton arrowButton = orderCard.findViewById(R.id.arrowButton);
                             TextView deliveryTime = orderCard.findViewById(R.id.deliveryTime);
+                            Button btnPickedUp = orderCard.findViewById(R.id.btnPickedUp);
 
                             // Get data from snapshot
                             String orderIdStr = orderSnap.getKey();
                             String customerNameStr = orderSnap.child("customerName").getValue(String.class);
                             String addressStr = orderSnap.child("address").getValue(String.class);
-                            String mobileStr = orderSnap.child("mobile").getValue(String.class);
-                            String timeStr = orderSnap.child("time").getValue(String.class); // Assuming a 'time' field exists
+                            String mobileStr = orderSnap.child("phone").getValue(String.class);
+                            // Fix: Safely handle timestamp as Long or String
+                            Object timeObj = orderSnap.child("timestamp").getValue();
+                            String timeStr = null;
+                            if (timeObj instanceof Long) {
+                                timeStr = String.valueOf((Long) timeObj);
+                            } else if (timeObj instanceof String) {
+                                timeStr = (String) timeObj;
+                            }
+                            Double latitude = orderSnap.child("latitude").getValue(Double.class);
+                            Double longitude = orderSnap.child("longitude").getValue(Double.class);
 
                             // Populate the views with order data
                             orderId.setText("#" + orderIdStr);
@@ -282,12 +301,55 @@ public class RiderHomeActivity extends AppCompatActivity {
                                 }
                             });
 
+                            // Set up the direction button
+                            arrowButton.setOnClickListener(v -> {
+                                if (latitude != null && longitude != null) {
+                                    // Only fetch location when button is tapped
+                                    if (ActivityCompat.checkSelfPermission(RiderHomeActivity.this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                                        ActivityCompat.checkSelfPermission(RiderHomeActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                                        ActivityCompat.requestPermissions(RiderHomeActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 1001);
+                                        Toast.makeText(RiderHomeActivity.this, "Location permission required.", Toast.LENGTH_SHORT).show();
+                                        return;
+                                    }
+                                    fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
+                                        double riderLat = 0.0;
+                                        double riderLng = 0.0;
+                                        if (location != null) {
+                                            riderLat = location.getLatitude();
+                                            riderLng = location.getLongitude();
+                                        }
+                                        Intent intent = new Intent(RiderHomeActivity.this, RiderMapActivity.class);
+                                        intent.putExtra("riderLat", riderLat);
+                                        intent.putExtra("riderLng", riderLng);
+                                        intent.putExtra("customerLat", latitude);
+                                        intent.putExtra("customerLng", longitude);
+                                        startActivity(intent);
+                                    });
+                                } else {
+                                    Toast.makeText(RiderHomeActivity.this, "Location not available for this order.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                            // Set up the picked up button
+                            btnPickedUp.setOnClickListener(v -> {
+                                if (orderIdStr != null) {
+                                    ordersRef.child(orderIdStr).child("status").setValue("picked-up")
+                                            .addOnSuccessListener(aVoid -> {
+                                                Toast.makeText(RiderHomeActivity.this, "Order confirmed for pickup!", Toast.LENGTH_SHORT).show();
+                                                // Do NOT remove the card from the layout
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Toast.makeText(RiderHomeActivity.this, "Failed to update order status.", Toast.LENGTH_SHORT).show();
+                                            });
+                                }
+                            });
+
                             // Add the card to the layout
                             jobListingLayout.addView(orderCard);
                         }
                     }
                 }
-                jobListingLayout.setVisibility(hasPendingOrders ? View.VISIBLE : View.GONE);
+                jobListingLayout.setVisibility(hasRequestedOrders ? View.VISIBLE : View.GONE);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
