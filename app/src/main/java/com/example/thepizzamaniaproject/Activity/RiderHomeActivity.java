@@ -4,12 +4,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import com.example.thepizzamaniaproject.R;
 import android.view.View;
 import android.widget.*;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import com.bumptech.glide.Glide;
@@ -172,7 +175,7 @@ public class RiderHomeActivity extends AppCompatActivity {
         if (riderInfoListener != null && riderRef != null) {
             riderRef.addValueEventListener(riderInfoListener);
         }
-        registerReceiver(profileImageReceiver, new IntentFilter("com.example.thepizzamaniaproject.UPDATE_PROFILE_IMAGE"), RECEIVER_NOT_EXPORTED);
+        ContextCompat.registerReceiver(this, profileImageReceiver, new IntentFilter("com.example.thepizzamaniaproject.UPDATE_PROFILE_IMAGE"), ContextCompat.RECEIVER_NOT_EXPORTED);
     }
 
     @Override
@@ -235,13 +238,52 @@ public class RiderHomeActivity extends AppCompatActivity {
         ordersListener = riderOrdersQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                jobListingLayout.removeAllViews(); // Clear previous views
                 boolean hasPendingOrders = false;
                 if (snapshot.exists()) {
                     for (DataSnapshot orderSnap : snapshot.getChildren()) {
                         String status = orderSnap.child("status").getValue(String.class);
                         if (status != null && status.equals("requested")) {
                             hasPendingOrders = true;
-                            break;
+
+                            // Inflate the new order card layout
+                            View orderCard = getLayoutInflater().inflate(R.layout.order_card, jobListingLayout, false);
+
+                            // Get views from the new card
+                            TextView orderId = orderCard.findViewById(R.id.orderId);
+                            TextView customerName = orderCard.findViewById(R.id.customerName);
+                            TextView deliveryAddress = orderCard.findViewById(R.id.deliveryAddress);
+                            ImageButton callButton = orderCard.findViewById(R.id.phone);
+                            TextView deliveryTime = orderCard.findViewById(R.id.deliveryTime);
+
+                            // Get data from snapshot
+                            String orderIdStr = orderSnap.getKey();
+                            String customerNameStr = orderSnap.child("customerName").getValue(String.class);
+                            String addressStr = orderSnap.child("address").getValue(String.class);
+                            String mobileStr = orderSnap.child("mobile").getValue(String.class);
+                            String timeStr = orderSnap.child("time").getValue(String.class); // Assuming a 'time' field exists
+
+                            // Populate the views with order data
+                            orderId.setText("#" + orderIdStr);
+                            customerName.setText(customerNameStr);
+                            deliveryAddress.setText(addressStr);
+
+                            if (timeStr != null) {
+                                deliveryTime.setText(timeStr);
+                            } else {
+                                deliveryTime.setVisibility(View.GONE); // Hide if no time data
+                            }
+
+                            // Set up the call button
+                            callButton.setOnClickListener(v -> {
+                                if (mobileStr != null && !mobileStr.isEmpty()) {
+                                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", mobileStr, null));
+                                    startActivity(intent);
+                                }
+                            });
+
+                            // Add the card to the layout
+                            jobListingLayout.addView(orderCard);
                         }
                     }
                 }
