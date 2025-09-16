@@ -26,4 +26,9 @@
         <item name="contentPadding">8dp</item>
     </style>
 
+    <style name="ToolbarTitleBold" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">28sp</item>
+    </style>
+
 </resources>

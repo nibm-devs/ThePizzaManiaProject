@@ -1,10 +1,16 @@
 [versions]
-agp = "8.11.1"
+agp = "8.11.2"
+circleimageview = "3.1.0"
+cloudinaryAndroid = "3.1.1"
+espressoCore = "3.7.0"
+glide = "5.0.5"
+glideCompiler = "5.0.5"
+gson = "2.13.2"
 junit = "4.13.2"
 junitVersion = "1.3.0"
-espressoCore = "3.7.0"
+material = "1.13.0"
+picasso = "2.8"
 appcompat = "1.7.1"
-material = "1.12.0"
 activity = "1.10.1"
 constraintlayout = "2.2.1"
 recyclerview = "1.4.0"
@@ -21,13 +27,19 @@ playServicesMaps = "19.2.0"
 playServicesLocation = "21.3.0"
 
 [libraries]
+circleimageview = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleimageview" }
+cloudinary-android = { group = "com.cloudinary", name = "cloudinary-android", version.ref = "cloudinaryAndroid" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+glide-compiler = { group = "com.github.bumptech.glide", name = "compiler", version.ref = "glideCompiler" }
+gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+picasso = { group = "com.squareup.picasso", name = "picasso", version.ref = "picasso" }
 recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 firebase-database = { group = "com.google.firebase", name = "firebase-database", version.ref = "firebaseDatabase" }
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
@@ -43,4 +55,3 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
-

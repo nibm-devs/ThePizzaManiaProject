@@ -6,9 +6,10 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" /> <!-- To get the network state permission -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> <!-- To get permission to image picking -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- To get the camera permission -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <!-- To get the camera permission -->
     <uses-permission android:name="android.permission.CAMERA" />
 
     <uses-feature
@@ -16,6 +17,7 @@
         android:required="false" />
 
     <application
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -41,14 +43,27 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="YOUR_API_KEY" />
 
+
+        <activity
+            android:name=".Activity.RiderHomeActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+
+        <activity android:name=".Activity.RiderSettingsActivity" />
+        <activity android:name=".Activity.RiderProfileActivity" />
+        <activity android:name=".Activity.RiderSecurityActivity" />
         <activity
             android:name=".Activity.LocationPickerActivity"
             android:exported="false"
             android:label="@string/title_activity_location_picker" />
         <activity
             android:name=".Activity.BranchManagementActivity"
-            android:exported="false"
-            android:label="@string/app_name"/>
+            android:exported="false" />
         <activity
             android:name=".Activity.PizzaDetailActivity"
             android:exported="false" />
@@ -61,15 +76,21 @@
         <activity
             android:name=".Activity.AdminMenuActivity"
             android:exported="false" />
-        <activity
-            android:name=".Activity.MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+<!--        <activity-->
+<!--            android:name=".Activity.MainActivity"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+        <activity
+            android:name=".Activity.AdminRegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.RiderRegistrationActivity"
+            android:exported="false" />
         <activity
             android:name=".Activity.AdminLoginActivity"
             android:exported="false" />

@@ -18,4 +18,13 @@
 
 
     <!-- <string name="app_name">My Awesome App</string> -->
+    <string name="order_id_placeholder">#1234567</string>
+    <string name="delivery_status_delivered">Delivered</string>
+    <string name="customer_name_placeholder">Donald Chavez</string>
+    <string name="location_icon_desc">Location icon</string>
+    <string name="delivery_address_placeholder">"No.2 Jalan Hang Tuah 6/2, 25300 Kuantan"</string>
+    <string name="delivery_date_placeholder">15 Sep 2025, 01:30 PM</string>
+    <string name="your_earning">Your Earning</string>
+    <string name="earning_amount_placeholder">$5.50</string>
+    <string name="calendar_icon_desc">Calendar icon</string>
 </resources>

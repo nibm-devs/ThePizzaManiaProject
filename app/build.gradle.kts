@@ -1,6 +1,15 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
+}
+
+// Load properties from local.properties
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(localPropertiesFile.inputStream())
 }
 
 android {
@@ -15,6 +24,11 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Make properties available in BuildConfig
+        buildConfigField("String", "CLOUDINARY_CLOUD_NAME", "\"${localProperties.getProperty("CLOUDINARY_CLOUD_NAME")}\"")
+        buildConfigField("String", "CLOUDINARY_API_KEY", "\"${localProperties.getProperty("CLOUDINARY_API_KEY")}\"")
+        buildConfigField("String", "CLOUDINARY_API_SECRET", "\"${localProperties.getProperty("CLOUDINARY_API_SECRET")}\"")
     }
 
     buildTypes {
@@ -33,13 +47,14 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
 }
 
 dependencies {
 
-    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation(libs.circleimageview)
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
@@ -58,12 +73,14 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
-    implementation("com.google.code.gson:gson:2.10.1")
+    implementation(libs.material)
+    implementation(libs.glide)
+    implementation(libs.gson)
+    implementation(libs.cloudinary.android)
+    implementation(libs.picasso)
 
     // In your app-level build.gradle
-    implementation("com.google.firebase:firebase-database:20.2.2")
+    implementation(libs.firebase.database)
 
-    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
+    annotationProcessor(libs.glide.compiler)
 }

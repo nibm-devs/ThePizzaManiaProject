@@ -14,6 +14,8 @@ import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import com.bumptech.glide.Glide;
 import com.example.thepizzamaniaproject.Activity.LoginActivity;
 import com.google.android.material.imageview.ShapeableImageView;
@@ -51,7 +53,7 @@ public class RiderHomeActivity extends AppCompatActivity {
         // Firebase references
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser == null) {
-            startActivity(new Intent(this, LoginActivity.class));
+            startActivity(new Intent(this, RiderRegistrationActivity.class));
             finish();
             return;
         }
