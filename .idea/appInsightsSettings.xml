@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.thepizzamaniaproject" />
-                  <option name="mobileSdkAppId" value="1:708738266984:android:8eee80aa5c6cf3712888dd" />
-                  <option name="projectId" value="pizza-mania-5b09b" />
-                  <option name="projectNumber" value="708738266984" />
+                  <option name="mobileSdkAppId" value="1:1080894808702:android:3a695c642f6b4669266e2f" />
+                  <option name="projectId" value="thepizzamaniaproject" />
+                  <option name="projectNumber" value="1080894808702" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
