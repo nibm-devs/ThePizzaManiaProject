@@ -59,7 +59,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Sign in to your admin account"
+                android:text="Sign in to your Account"
                 android:textColor="@color/gray_600"
                 android:textSize="14sp"
                 android:gravity="center"
@@ -83,7 +83,7 @@
                     android:id="@+id/editTextUsername"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Admin ID"
+                    android:hint="User ID"
                     android:inputType="text"
                     android:maxLines="1"
                     android:textColor="@color/black"
