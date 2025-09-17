@@ -16,6 +16,7 @@
         android:required="false" />
 
     <application
+        android:name=".Activity.MyApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -24,7 +25,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ThePizzaManiaProject"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:name">
 
         <!--
              TODO: Before you run your application, you need a Google Maps API key.
@@ -61,8 +63,17 @@
         <activity
             android:name=".Activity.AdminMenuActivity"
             android:exported="false" />
+<!--        <activity-->
+<!--            android:name=".Activity.MainActivity"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
         <activity
-            android:name=".Activity.MainActivity"
+            android:name=".Activity.AdminLoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -70,9 +81,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Activity.AdminLoginActivity"
-            android:exported="false" />
         <activity
             android:name=".Activity.CartActivity"
             android:exported="false" />
@@ -91,6 +99,37 @@
         <activity
             android:name=".Activity.HomeActivity"
             android:exported="false" />
+        <activity
+            android:name=".Activity.RiderRegistrationActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".Activity.RiderSettingsActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".Activity.RiderDeliveryHistoryActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".Activity.RiderSecurityActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".Activity.RiderProfileActivity"
+            android:exported="false" />
+
+                <activity
+                    android:name=".Activity.RiderHomeActivity"
+                    android:exported="true">
+                    <intent-filter>
+                        <action android:name="android.intent.action.MAIN" />
+
+                        <category android:name="android.intent.category.LAUNCHER" />
+                    </intent-filter>
+                </activity>
+        <activity android:name=".Activity.RiderMapActivity" />
+
 
         <provider
             android:name="androidx.core.content.FileProvider"
