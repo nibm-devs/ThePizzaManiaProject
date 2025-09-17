@@ -63,10 +63,20 @@ public class LoginActivity extends AppCompatActivity {
         databaseHelper = new DatabaseHelper(this);
         sessionManager = new SessionManager(this);
 
+//        // Check if user is already logged in
+//        if (sessionManager.isLoggedIn())
+//        {
+//            goToHomeActivity();
+//            return;
+//        }
+
         // Check if user is already logged in
-        if (sessionManager.isLoggedIn())
-        {
-            goToHomeActivity();
+        if (sessionManager.isLoggedIn()) {
+            if (sessionManager.isAdmin()) {
+                goToAdminPanelActivity();
+            } else {
+                goToHomeActivity();
+            }
             return;
         }
 
@@ -90,32 +100,32 @@ public class LoginActivity extends AppCompatActivity {
         registerTextView.setOnClickListener(v -> goToRegisterActivity());
     }
 
-    private void loginUser()
-    {
-        String email = emailEditText.getText().toString().trim();
-        String password = passwordEditText.getText().toString().trim();
-
-        if (email.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        // Check if user exists and password matches
-        if (databaseHelper.checkUser(email, password))
-        {
-            // Get user details
-            com.example.thepizzamaniaproject.Domain.UserDomain user = databaseHelper.getUserByEmail(email);
-            if (user != null)
-            {
-                sessionManager.createLoginSession(email, user.getName(), user.getId());
-                goToHomeActivity();
-            }
-        }
-        else
-        {
-            Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
-        }
-    }
+//    private void loginUser()
+//    {
+//        String email = emailEditText.getText().toString().trim();
+//        String password = passwordEditText.getText().toString().trim();
+//
+//        if (email.isEmpty() || password.isEmpty()) {
+//            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        // Check if user exists and password matches
+//        if (databaseHelper.checkUser(email, password))
+//        {
+//            // Get user details
+//            com.example.thepizzamaniaproject.Domain.UserDomain user = databaseHelper.getUserByEmail(email);
+//            if (user != null)
+//            {
+//                sessionManager.createLoginSession(email, user.getName(), user.getId());
+//                goToHomeActivity();
+//            }
+//        }
+//        else
+//        {
+//            Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
     private void goToMainActivity()
     {
@@ -135,6 +145,40 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    private void goToAdminPanelActivity() {
+        Intent intent = new Intent(LoginActivity.this, AdminPanelActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+    private void loginUser() {
+        String email = emailEditText.getText().toString().trim();
+        String password = passwordEditText.getText().toString().trim();
+
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check for admin login first
+        if (email.equals("admin1") && password.equals("admin123")) {
+            sessionManager.createAdminSession(); // Create a new method for admin sessions
+            goToAdminPanelActivity();
+            return;
+        }
+
+        // Existing customer login check
+        if (databaseHelper.checkUser(email, password)) {
+            com.example.thepizzamaniaproject.Domain.UserDomain user = databaseHelper.getUserByEmail(email);
+            if (user != null) {
+                sessionManager.createLoginSession(email, user.getName(), user.getId());
+                goToHomeActivity();
+            }
+        } else {
+            Toast.makeText(this, "Invalid email or password", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
