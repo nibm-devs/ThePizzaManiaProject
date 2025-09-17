@@ -1,6 +1,7 @@
 import java.util.Properties
 
 plugins {
+
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
 }
@@ -54,6 +55,14 @@ android {
 
 dependencies {
 
+
+    implementation ("com.google.firebase:firebase-database")
+
+    implementation("com.squareup.picasso:picasso:2.71828")
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation("com.google.firebase:firebase-database:20.3.0")
+    implementation("com.google.firebase:firebase-bom:32.7.0")
     implementation(libs.circleimageview)
     implementation(libs.appcompat)
     implementation(libs.material)
@@ -83,4 +92,5 @@ dependencies {
     implementation(libs.firebase.database)
 
     annotationProcessor(libs.glide.compiler)
+
 }

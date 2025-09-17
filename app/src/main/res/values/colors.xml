@@ -11,6 +11,8 @@
 
 
     <!-- Accent Colors -->
+    <color name="purple_500">#6200EE</color>
+    <color name="purple_700">#FF6200EE</color>
     <color name="green">#4CAF50</color>
     <color name="star_yellow">#FFD700</color>
     <color name="accent">#FF4081</color>
@@ -52,4 +54,6 @@
     <!-- Gradient Colors -->
     <color name="gradient_start">#E74C3C</color>
     <color name="gradient_end">#FF8C42</color>
+    <color name="blue_grey_700">#455A64</color>
+    <color name="red">#FF0000</color>
 </resources>

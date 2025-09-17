@@ -16,6 +16,7 @@ import com.example.thepizzamaniaproject.R;
 
 public class PizzaDetailActivity extends AppCompatActivity {
 
+
     private PizzaDomain pizza;
 
     @Override
